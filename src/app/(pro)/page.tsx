@@ -66,7 +66,7 @@ export default function ProHomePage() {
               title="Calisto Ops"
               text="The core operations workspace inside Calisto Pro. Shared calendars, unified CRM, tasks, tickets, and simple reporting for every stay, inspection, and showing across properties, portfolios, and offices, all powered by CalistoOS."
               list={[
-                <a key="ops" href="/ops" className="cal-link-btn">Explore Ops →</a>
+                "Explore Ops →"
               ]}
             />
 
