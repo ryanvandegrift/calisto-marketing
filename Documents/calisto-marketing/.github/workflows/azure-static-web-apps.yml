@@ -20,23 +20,7 @@ jobs:
           submodules: true
           lfs: false
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Next.js app
-        run: npm run build
-        env:
-          NEXT_PUBLIC_WEBHOOK_TRIAL: ${{ secrets.NEXT_PUBLIC_WEBHOOK_TRIAL }}
-          NEXT_PUBLIC_WEBHOOK_CONTACT: ${{ secrets.NEXT_PUBLIC_WEBHOOK_CONTACT }}
-          NEXT_PUBLIC_WEBHOOK_COLLECTION: ${{ secrets.NEXT_PUBLIC_WEBHOOK_COLLECTION }}
-          NEXT_PUBLIC_WEBHOOK_DEMO: ${{ secrets.NEXT_PUBLIC_WEBHOOK_DEMO }}
-
-      - name: Deploy to Azure Static Web Apps
+      - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -44,8 +28,8 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/"
+          app_build_command: "npm run build"
           output_location: "out"
-          skip_app_build: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
