@@ -75,7 +75,7 @@ export default function ProHomePage() {
               title="Calisto Sync"
               text="Connect OTAs, portals, and websites to a single source of truth. Rates, availability, and listing content stay aligned while bookings and inquiries flow back into Calisto Ops with full channel attribution."
               list={[
-                <a key="sync" href="/sync" className="cal-link-btn">Explore Sync →</a>
+                "Explore Sync →"
               ]}
             />
 
@@ -84,7 +84,7 @@ export default function ProHomePage() {
               title="Calisto Navigator"
               text="Give guests, owners, buyers, and sellers a clean, branded portal or app for trips, viewings, documents, statuses, messaging, and upsells. Navigator reads from Calisto Ops and works with Calisto Key for digital keys and smooth arrivals."
               list={[
-                <a key="nav" href="/navigator" className="cal-link-btn">Explore Navigator →</a>
+                "Explore Sync →"
               ]}
             />
 
@@ -93,7 +93,7 @@ export default function ProHomePage() {
               title="Calisto Assure"
               text="Standardize inspections, photos, scoring, and condition reports across properties. Issues become tasks in Calisto Ops and every room, unit, and listing has a quality history your owners, brands, and guests can trust."
               list={[
-                <a key="assure" href="/assure" className="cal-link-btn">Explore Assure →</a>
+                "Explore Assure →"
               ]}
             />
 
@@ -102,7 +102,7 @@ export default function ProHomePage() {
               title="Calisto Deals"
               text="Pipelines for listings, mandates, offers, and contracts that live in the same system as your operations. Track milestones and commissions while keeping every deal tied to the right people and properties in Calisto Ops."
               list={[
-                <a key="deals" href="/deals" className="cal-link-btn">Explore Deals →</a>
+                "Explore Deals →"
               ]}
             />
 
@@ -111,7 +111,7 @@ export default function ProHomePage() {
               title="Calisto Purview"
               text="The client-facing workspace where agents and brokerages send curated listings, organize documents, track next steps, and run e-signing—so clients always know what's happening, what's signed, and what comes next."
               list={[
-                <a key="purview" href="/purview" className="cal-link-btn">Explore Purview →</a>
+                "Explore Purview →"
               ]}
             />
 
@@ -120,7 +120,7 @@ export default function ProHomePage() {
               title="Calisto Sign"
               text="Property-smart e-signature for rental agreements, sales contracts, and disclosure packets. Templates pull data from Ops so documents populate automatically with the right property details, guest names, and deal terms."
               list={[
-                <a key="sign" href="/sign" className="cal-link-btn">Explore Sign →</a>
+                "Explore Sign →"
               ]}
             />
 
@@ -129,7 +129,7 @@ export default function ProHomePage() {
               title="Calisto Key"
               text="Turn bookings, showings, and service visits into digital keys that just work. Calisto Key connects your smart locks to Ops, Navigator, Signal, and 24·7 so guests, owners, staff, and vendors get the right access at the right time with a full audit trail behind every door."
               list={[
-                <a key="key" href="/access" className="cal-link-btn">Explore Key →</a>
+                "Explore Key →"
               ]}
             />
 
@@ -138,7 +138,7 @@ export default function ProHomePage() {
               title="Calisto Signal"
               text="Bring sensors, devices, and smart home data into the same story as bookings and quality. Calisto Signal watches for unusual patterns, battery issues, and device health and turns them into clear signals, tasks, and alerts in Ops, Assure, and 24·7."
               list={[
-                <a key="signal" href="/signal" className="cal-link-btn">Explore Signal →</a>
+                "Explore Signal →"
               ]}
             />
 
@@ -147,7 +147,7 @@ export default function ProHomePage() {
               title="Calisto 24·7"
               text="A human team that sees what Calisto Pro sees and can act on it at any hour. Calisto 24·7 works from the same bookings, keys, signals, and quality records as your internal teams so lockouts, after-hours calls, and urgent issues are handled with context, not guesswork."
               list={[
-                <a key="247" href="/24-7" className="cal-link-btn">Explore 24·7 →</a>
+                "Explore 24·7 →"
               ]}
             />
           </div>
