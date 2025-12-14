@@ -1,317 +1,334 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const PINK = "#F6C1D9";
+const MAX_W = 1160;
 
-type Audience =
-  | "Hotel & Hospitality Operators"
-  | "Property Managers"
-  | "Second-Home Owners"
-  | "Real Estate Agents"
-  | "Managing Brokers";
-
-type Product = {
+type PlatformProduct = {
   key: string;
   name: string;
+  category: string; // small eyebrow label
   overview: string;
-  features: string[];
+  features: string[]; // 8–10
   href: string;
+  imageSrc?: string; // optional placeholder
 };
 
 type Solution = {
   key: string;
-  name: Audience;
-  headline: string;
-  summary: string;
-  recommended: { productKey: string; why: string }[];
+  name: string;
+  subtitle: string;
+  goals: string[];
+  recommended: { name: string; href: string }[];
+  href: string;
+};
+
+type SimpleItem = {
+  title: string;
+  description: string;
   href: string;
 };
 
 export default function ProHeader() {
   const [open, setOpen] = useState<null | "platform" | "solutions" | "company">(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"platform" | "solutions">("platform");
 
-  const headerRef = useRef<HTMLElement | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const closeTimer = useRef<number | null>(null);
-
-  const products = useMemo<Product[]>(
+  const platformItems = useMemo<PlatformProduct[]>(
     () => [
       {
         key: "deals",
         name: "Calisto Deals",
+        category: "Real estate CRM",
         overview:
-          "The property-native CRM for agents, teams & brokerages—built on CalistoOS so listings, buyers, sellers, and showings work like real estate actually works.",
+          "The property-native CRM for agents, teams, and brokerages—built on CalistoOS.",
         features: [
-          "Property-native pipeline (not accounts)",
-          "Listings, buyers, sellers in one workspace",
-          "Showings, access, and follow-ups connected",
-          "Inspection + condition context in the deal",
-          "Team visibility and accountability",
-          "Client-ready share flows via Purview",
-          "Works with Sign for fast execution",
-          "Structured notes and next steps",
-          "Designed for calm selling",
+          "Pipelines for listings, offers, contracts",
+          "Property-centric records (not “accounts”)",
+          "Showings, inspections, access context",
+          "Client timelines + next steps",
+          "Task + follow-up automation",
+          "Team handoffs and visibility",
+          "Portfolio-level reporting",
+          "Works cleanly at scale",
         ],
         href: "/deals",
+        imageSrc: "/images/products/deals.jpg",
       },
       {
         key: "sign",
         name: "Calisto Sign",
+        category: "E-signatures",
         overview:
-          "Property-smart e-signatures with a calm, branded experience—keeping documents, signers, and properties in one place on the Microsoft cloud.",
+          "Property-smart e-signatures with a calm, branded signing experience—built on CalistoOS + Microsoft cloud.",
         features: [
-          "Property-linked signature packets",
-          "Multi-party routing and approvals",
-          "Audit trails & compliance-ready records",
-          "Templates for repeatable workflows",
-          "Role-based access control",
-          "Client-friendly signing experience",
-          "Embedded in Purview and Solutions",
-          "Secure document organization",
-          "Faster execution for teams",
+          "Multi-party workflows",
+          "Embedded approvals + signatures",
+          "Audit trails + compliance",
+          "Signer experience that feels premium",
+          "Property + document context together",
+          "Templates and role-based routing",
+          "Status visibility for teams + clients",
+          "Faster execution than DocuSign-style tools",
         ],
         href: "/sign",
+        imageSrc: "/images/products/sign.jpg",
       },
       {
         key: "purview",
         name: "Calisto Purview",
+        category: "Client portal",
         overview:
-          "The client experience for real estate—curated listings, documents, next steps, and signing in one workspace so clients always know what’s happening.",
+          "The client-facing workspace where you share curated listings, manage documents, track steps, and run signing—without confusion.",
         features: [
-          "Curated listing collections",
-          "Document hub for transactions",
-          "Clear next steps and timelines",
-          "E-signing embedded with Sign",
-          "Client clarity: what’s signed + what’s next",
-          "Brokerage-ready experience layer",
-          "Works across deals + operations",
-          "Beautiful, branded presentation",
-          "Clean handoff and accountability",
+          "Curated listing boards",
+          "Document hub + timelines",
+          "Next steps that clients understand",
+          "Integrated signing inside the flow",
+          "Status visibility across the deal",
+          "Clean “what’s needed” checklists",
+          "Branded experience for brokerages",
+          "Mobile-friendly by default",
         ],
         href: "/purview",
+        imageSrc: "/images/products/purview.jpg",
       },
       {
         key: "ops",
         name: "Calisto Ops",
+        category: "Operations workspace",
         overview:
-          "The operations workspace—calendars, reservations, showings, events, tickets, folios, and payments in one calm hub.",
+          "The calm operational hub for stays, visits, and deals—calendars, reservations, showings, events, tickets, folios, and payments.",
         features: [
           "Unified operational calendar",
+          "Tickets + workflows in one hub",
           "Reservations + showings + events",
-          "Tickets and workflows in one hub",
-          "Folios & payment context",
           "Cross-team coordination",
+          "Folio + payment context",
           "Multi-property visibility",
           "Owner + staff alignment",
           "Built to reduce tool sprawl",
-          "Calm operations, at scale",
         ],
         href: "/ops",
+        imageSrc: "/images/products/ops.jpg",
       },
       {
         key: "assure",
         name: "Calisto Assure",
+        category: "Quality + condition",
         overview:
-          "The quality and condition layer—inspect, document, and prove condition with visual evidence and records that flow into Calisto One.",
+          "Structured inspections and evidence trails that prove condition across homes, units, and rooms—inside Calisto One.",
         features: [
-          "Structured inspections",
-          "Photo evidence + documentation",
-          "Condition history per unit/home",
-          "Client-ready proof and records",
-          "Operational handoff into Ops",
-          "Standards & checklists by asset type",
-          "Trust layer for owners and guests",
-          "Better dispute prevention",
-          "Designed for repeatability",
+          "Inspection flows + scoring",
+          "Photo evidence + structured records",
+          "Condition history per property/unit",
+          "Issue → task/workflow conversion",
+          "Owner-ready reports",
+          "Team accountability",
+          "Compliance-ready documentation",
+          "Built for trust at scale",
         ],
         href: "/assure",
+        imageSrc: "/images/products/assure.jpg",
       },
       {
         key: "sync",
         name: "Calisto Sync",
+        category: "Channel management",
         overview:
-          "A channel manager built into Calisto One—connect Airbnb, Booking.com, VRBO, and direct availability into one reliable source of truth.",
+          "A channel manager built into Calisto One—connect OTAs and your website to a clean source of truth for rates + availability.",
         features: [
-          "Unified availability & rates",
+          "Airbnb + Booking.com + VRBO",
+          "Direct website connectivity",
+          "Rate + availability sync",
           "Avoid double bookings",
-          "Stop channel-by-channel updates",
-          "Clean operational source of truth",
-          "Works with Ops calendar",
-          "Aligns with guest comms",
-          "Built for operators at scale",
-          "Context for workflows",
-          "Clean, reliable syncing",
+          "Channel attribution clarity",
+          "Centralized content alignment",
+          "Reliable operational source of truth",
+          "Designed for calm ops",
         ],
         href: "/sync",
+        imageSrc: "/images/products/sync.jpg",
       },
       {
         key: "navigator",
         name: "Calisto Navigator",
+        category: "Guest app",
         overview:
           "A branded guest experience app—booking details, online check-in, ID flows, agreements, messaging, upsells, and digital access.",
         features: [
-          "Online check-in & ID flows",
-          "Agreements and signature flows",
-          "Guest messaging (structured)",
-          "Upsells & service requests",
-          "Digital access integration",
-          "Branded guest experience",
-          "Works with Ops + Sync",
-          "Designed for repeatable stays",
-          "Guests actually use it",
+          "Online check-in + identity flows",
+          "Agreements in the guest journey",
+          "Guest messaging + automation",
+          "Upsells + service requests",
+          "Booking context in one place",
+          "Works with Calisto Access",
+          "Clean, branded UX guests use",
+          "Built for hotels + property managers",
         ],
         href: "/navigator",
+        imageSrc: "/images/products/navigator.jpg",
       },
       {
         key: "access",
         name: "Calisto Access",
+        category: "Digital keys",
         overview:
-          "Digital access for guests, owners & teams—turn bookings, tasks, and visits into keys that match how your operations actually work.",
+          "Turn bookings, tasks, and visits into digital keys—standalone or integrated into Calisto One for full operational context.",
         features: [
-          "Keys from bookings/tasks/visits",
-          "Role-based access control",
-          "Time-bound entry rules",
-          "Audit logs and visibility",
-          "Works with Ops & Navigator",
-          "Owner + staff access flows",
-          "Fieldwork-friendly access",
-          "Multi-property ready",
-          "Calm access governance",
+          "Time-bound access for guests/teams",
+          "Bookings → keys automatically",
+          "Vendor + staff access control",
+          "Owner access without chaos",
+          "Audit trails per door",
+          "Integrates with Ops + Navigator",
+          "Supports operational playbooks",
+          "Built for real-world workflows",
         ],
         href: "/access",
+        imageSrc: "/images/products/access.jpg",
       },
       {
         key: "signal",
         name: "Calisto Signal",
+        category: "Safety + device hub",
         overview:
-          "Safety & device hub—devices send signals, CalistoOS and Azure IoT turn them into calm alerts inside your operations hub.",
+          "IoT signals become calm alerts—leaks, doors, smoke, temperature, motion—structured inside your operations hub.",
         features: [
-          "Leak, motion, door, smoke, temp monitoring",
-          "Structured alerts (not noise)",
-          "Incident context inside Ops",
-          "Device-level visibility",
-          "Automation-ready escalation",
-          "Works with Access + 24·7",
-          "Built for homes and hotels",
-          "Azure IoT patterns",
-          "Calm incident handling",
+          "Leak + smoke + environment signals",
+          "Door/motion awareness",
+          "Alert routing + escalation",
+          "Azure IoT foundations",
+          "Structured incident records",
+          "Works with Calisto 24·7",
+          "Property + device history",
+          "Designed for trust + safety",
         ],
         href: "/signal",
+        imageSrc: "/images/products/signal.jpg",
       },
       {
         key: "247",
         name: "Calisto 24·7",
+        category: "Live coverage",
         overview:
-          "Live coverage—calls, channel messages, and Signal alerts handled by a real team using your playbooks, day and night.",
+          "A real team watching phones, messages, and Signal alerts—following your playbooks—so you wake up to a clear list, not chaos.",
         features: [
-          "Live response to calls/messages/alerts",
-          "Playbook-driven handling",
-          "Clear morning recap list",
+          "Live response team",
+          "Phones + channel messages covered",
+          "Signal alerts monitored",
+          "Playbooks + call scripts followed",
           "Incident documentation",
-          "Works with Signal & Ops",
-          "Protects focus time",
-          "Designed for owners + operators",
-          "Scales across markets",
-          "Always-on calm coverage",
+          "Morning-ready summaries",
+          "Owner/guest/buyer coverage",
+          "Scales without burnout",
         ],
         href: "/24-7",
+        imageSrc: "/images/products/247.jpg",
       },
     ],
     []
   );
 
-  const productByKey = useMemo(() => {
-    const m = new Map<string, Product>();
-    products.forEach((p) => m.set(p.key, p));
-    return m;
-  }, [products]);
+  const [activeProduct, setActiveProduct] = useState<PlatformProduct>(platformItems[0]);
 
   const solutions = useMemo<Solution[]>(
     () => [
       {
         key: "hospitality",
         name: "Hotel & Hospitality Operators",
-        headline: "Guest experience, building safety, and digital keys in one system.",
-        summary:
-          "Bring rooms, residences, guests, staff, and buildings into a single view—so operations stay calm even at scale.",
+        subtitle: "Guest experience, keys, safety, and operations—together.",
+        goals: [
+          "Unify guest experience + operations",
+          "Digital keys that match workflows",
+          "Reduce incidents + late-night chaos",
+          "Improve staff coordination",
+        ],
         recommended: [
-          { productKey: "ops", why: "Run stays, events, tickets, and payments in one hub." },
-          { productKey: "sync", why: "Keep channels aligned and eliminate double booking risk." },
-          { productKey: "navigator", why: "Deliver check-in, messaging, and upsells guests use." },
-          { productKey: "access", why: "Turn bookings into keys with role-based control." },
-          { productKey: "signal", why: "Convert device noise into structured alerts." },
-          { productKey: "247", why: "After-hours coverage using your playbooks." },
-          { productKey: "assure", why: "Condition proof and standards across units." },
-          { productKey: "sign", why: "Agreements and approvals tied to the property record." },
+          { name: "Calisto Ops", href: "/ops" },
+          { name: "Calisto Navigator", href: "/navigator" },
+          { name: "Calisto Access", href: "/access" },
+          { name: "Calisto Signal", href: "/signal" },
+          { name: "Calisto 24·7", href: "/24-7" },
+          { name: "Calisto Sync", href: "/sync" },
         ],
         href: "/solutions/hospitality",
       },
       {
         key: "pm",
         name: "Property Managers",
-        headline: "A calm operating system for homes, teams, and owners.",
-        summary:
-          "Coordinate inspections, keys, devices, guest workflows, and owner trust—without stitching together a dozen tools.",
+        subtitle: "Operate properties calmly across teams, owners, and guests.",
+        goals: [
+          "Standardize ops across properties",
+          "Prove condition with evidence",
+          "Reduce tool sprawl and missed tasks",
+          "Deliver a premium owner + guest experience",
+        ],
         recommended: [
-          { productKey: "ops", why: "Centralize calendars, tickets, and operational work." },
-          { productKey: "assure", why: "Standardize inspection, condition, and proof." },
-          { productKey: "access", why: "Control entry for staff, guests, and vendors." },
-          { productKey: "signal", why: "Catch leaks and risks early with structured alerts." },
-          { productKey: "247", why: "After-hours coverage that follows your playbooks." },
-          { productKey: "navigator", why: "Guest app for check-in, messaging, and add-ons." },
-          { productKey: "sync", why: "Channel reliability and clean source of truth." },
-          { productKey: "sign", why: "Approvals and documents in one place." },
+          { name: "Calisto Ops", href: "/ops" },
+          { name: "Calisto Assure", href: "/assure" },
+          { name: "Calisto Sync", href: "/sync" },
+          { name: "Calisto Navigator", href: "/navigator" },
+          { name: "Calisto Access", href: "/access" },
+          { name: "Calisto Signal", href: "/signal" },
+          { name: "Calisto 24·7", href: "/24-7" },
+          { name: "Calisto Sign", href: "/sign" },
         ],
         href: "/solutions/property-managers",
       },
       {
-        key: "owners",
+        key: "secondhome",
         name: "Second-Home Owners",
-        headline: "Know what’s happening—without living on your phone.",
-        summary:
-          "Condition proof, secure access, safer homes, and a calm record of everything that happened while you were away.",
+        subtitle: "Visibility, protection, and calm oversight—without becoming a manager.",
+        goals: [
+          "Know what’s happening in my home",
+          "Prevent damage and respond fast",
+          "Control access cleanly",
+          "Get clear records and reports",
+        ],
         recommended: [
-          { productKey: "assure", why: "Inspection evidence and condition history you can trust." },
-          { productKey: "access", why: "Control who can enter and when—fully logged." },
-          { productKey: "signal", why: "Early warnings for leaks, smoke, doors, and more." },
-          { productKey: "247", why: "A live team to handle incidents and interruptions." },
-          { productKey: "ops", why: "A calm hub for visits, tasks, and household operations." },
-          { productKey: "sign", why: "Approvals and documents in one secure place." },
+          { name: "Calisto Signal", href: "/signal" },
+          { name: "Calisto Access", href: "/access" },
+          { name: "Calisto Assure", href: "/assure" },
+          { name: "Calisto 24·7", href: "/24-7" },
+          { name: "Calisto Ops", href: "/ops" },
         ],
         href: "/solutions/second-home-owners",
       },
       {
         key: "agents",
         name: "Real Estate Agents",
-        headline: "Property-native sales + a client experience that feels premium.",
-        summary:
-          "Close faster with a CRM that understands properties, plus signing and access that match the real-world workflow.",
+        subtitle: "Property-native sales workflows, client experience, and signing.",
+        goals: [
+          "Run deals from one calm workspace",
+          "Stop juggling docs, showings, follow-ups",
+          "Give clients clarity + confidence",
+          "Close faster with less friction",
+        ],
         recommended: [
-          { productKey: "deals", why: "CRM designed for listings, buyers, sellers, and showings." },
-          { productKey: "sign", why: "Property-smart signature flows that keep execution calm." },
-          { productKey: "purview", why: "Client workspace for curated listings and next steps." },
-          { productKey: "access", why: "Control showings and track entry when needed." },
-          { productKey: "assure", why: "Condition evidence that builds trust and reduces disputes." },
+          { name: "Calisto Deals", href: "/deals" },
+          { name: "Calisto Sign", href: "/sign" },
+          { name: "Calisto Purview", href: "/purview" },
+          { name: "Calisto Access", href: "/access" },
         ],
         href: "/solutions/real-estate-agents",
       },
       {
         key: "brokers",
         name: "Managing Brokers",
-        headline: "Standardize how your team sells—without slowing them down.",
-        summary:
-          "Visibility, consistency, and accountability across agents—with a client experience your brokerage owns.",
+        subtitle: "Visibility, standardization, and a premium client journey across the brokerage.",
+        goals: [
+          "Standardize team workflows",
+          "Create a consistent client experience",
+          "Improve compliance and documentation",
+          "Gain performance visibility without micromanaging",
+        ],
         recommended: [
-          { productKey: "deals", why: "Team pipeline visibility + real estate-native workflows." },
-          { productKey: "purview", why: "Consistent client experience across the brokerage." },
-          { productKey: "sign", why: "Approvals and signatures with audit trails and control." },
-          { productKey: "assure", why: "Standards and condition evidence that protects the brand." },
-          { productKey: "247", why: "Coverage so teams stay present during peak hours." },
-          { productKey: "access", why: "Track and control entry during showings." },
+          { name: "Calisto Deals", href: "/deals" },
+          { name: "Calisto Purview", href: "/purview" },
+          { name: "Calisto Sign", href: "/sign" },
+          { name: "Calisto Assure", href: "/assure" },
         ],
         href: "/solutions/managing-brokers",
       },
@@ -319,458 +336,466 @@ export default function ProHeader() {
     []
   );
 
-  const [activeProductKey, setActiveProductKey] = useState(products[0]?.key ?? "deals");
-  const [activeSolutionKey, setActiveSolutionKey] = useState(solutions[0]?.key ?? "hospitality");
+  const [activeSolution, setActiveSolution] = useState<Solution>(solutions[0]);
 
-  const activeProduct = productByKey.get(activeProductKey) ?? products[0];
-  const activeSolution = solutions.find((s) => s.key === activeSolutionKey) ?? solutions[0];
+  const companyItems = useMemo<SimpleItem[]>(
+    () => [
+      {
+        title: "About Calisto Pro",
+        description: "What we build and why it exists.",
+        href: "/company",
+      },
+      {
+        title: "Founder",
+        description: "The story behind Calisto.",
+        href: "/company/founder",
+      },
+      {
+        title: "Calisto One",
+        description: "The unified portal that connects everything.",
+        href: "/calisto-one",
+      },
+      {
+        title: "Calisto Collection",
+        description: "Homes managed using Calisto Pro.",
+        href: "/calisto-collection",
+      },
+      {
+        title: "Blog",
+        description: "Guides, product thinking, and updates.",
+        href: "/blog",
+      },
+      {
+        title: "Contact",
+        description: "Talk to our team.",
+        href: "/contact",
+      },
+    ],
+    []
+  );
 
-  // ESC closes
+  // Close on ESC
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setOpen(null);
-        setMobileOpen(false);
-      }
+      if (e.key === "Escape") setOpen(null);
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // click outside closes (desktop)
-  useEffect(() => {
-    function onDocMouseDown(e: MouseEvent) {
-      if (!open) return;
-      const t = e.target as Node;
-      if (menuRef.current?.contains(t)) return;
-      if (headerRef.current?.contains(t)) return;
-      setOpen(null);
-    }
-    document.addEventListener("mousedown", onDocMouseDown);
-    return () => document.removeEventListener("mousedown", onDocMouseDown);
-  }, [open]);
-
-  function scheduleClose() {
-    if (closeTimer.current) window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => setOpen(null), 170);
+  // Close menus when route changes via click (basic)
+  function closeAll() {
+    setOpen(null);
+    setMobileOpen(false);
   }
-  function cancelClose() {
-    if (closeTimer.current) window.clearTimeout(closeTimer.current);
-    closeTimer.current = null;
-  }
-
-  const [mobileSelectedProductKey, setMobileSelectedProductKey] = useState<string | null>(null);
-  const [mobileSelectedSolutionKey, setMobileSelectedSolutionKey] = useState<string | null>(null);
-
-  // max width = 1160 (your preference)
-  const PANEL_W = "max-w-[1160px]";
-  const LIST_MAX_H = "max-h-[430px]";
-
-  // Panel animation state (subtle, premium)
-  const [panelVisible, setPanelVisible] = useState(false);
-  useEffect(() => {
-    if (open) {
-      const t = window.setTimeout(() => setPanelVisible(true), 10);
-      return () => window.clearTimeout(t);
-    } else {
-      setPanelVisible(false);
-    }
-  }, [open]);
 
   return (
-    <header
-  ref={(n) => {
-    headerRef.current = n;
-  }}
-  className="sticky top-0 z-50 font-sans"
->
-      {/* Top bar (calm glass) */}
-      <div className="border-b border-black/10 bg-white/65 backdrop-blur-2xl">
-        <div className="cal-main-inner" style={{ paddingTop: 0, paddingBottom: 0 }}>
-          <div className="flex h-16 items-center justify-between gap-4">
-            {/* Brand */}
-            <Link href="/" className="inline-flex items-center gap-3">
-              <img
-                src="https://calistomedia.blob.core.windows.net/calisto-one/calisto_logo_300.png"
-                alt="Calisto"
-                className="h-7 w-auto"
-              />
-              <span className="text-[12px] tracking-[0.24em] text-black/60 font-light">PRO</span>
-            </Link>
+    <header className="sticky top-0 z-50 border-b border-black/10 bg-white/90 backdrop-blur">
+      <div className="mx-auto px-4" style={{ maxWidth: MAX_W }}>
+        <div className="flex h-16 items-center justify-between gap-4">
+          {/* Brand */}
+          <Link href="/" className="inline-flex items-center gap-3" onClick={closeAll}>
+            <img
+              src="https://calistomedia.blob.core.windows.net/calisto-one/calisto_logo_300.png"
+              alt="Calisto"
+              className="h-7 w-auto"
+            />
+            <span className="text-[12px] tracking-[0.22em] text-black/60">
+              PRO
+            </span>
+          </Link>
 
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-8">
-              <NavButton label="Platform" open={open === "platform"} onOpen={() => setOpen("platform")} />
-              <NavButton label="Solutions" open={open === "solutions"} onOpen={() => setOpen("solutions")} />
-              <Link href="/pricing" className="text-[14px] text-black/70 hover:text-black transition font-light">
-                Pricing
-              </Link>
-              <NavButton label="Company" open={open === "company"} onOpen={() => setOpen("company")} />
-            </nav>
-
-            {/* Actions + Mobile */}
-            <div className="flex items-center gap-3">
-              {/* Log In as pink pill */}
-              <a
-                href="https://one.calistoco.com/"
-                className="hidden md:inline-flex items-center rounded-full px-4 py-2 text-[14px] border border-black/10 hover:border-black/20 transition font-light shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
-                style={{ background: PINK, color: "#000" }}
-              >
-                Log In
-              </a>
-
-              <Link
-                href="/contact"
-                className="hidden md:inline-flex items-center rounded-full border border-black/10 px-4 py-2 text-[14px] text-black/85 hover:border-black/20 hover:text-black transition bg-white/60 font-light"
-              >
-                Talk to our team
-              </Link>
-
-              <button
-                className="md:hidden inline-flex items-center rounded-full border border-black/15 px-3 py-2 text-[13px] bg-white/60 font-light"
-                onClick={() => {
-                  setMobileOpen((v) => !v);
-                  setMobileSelectedProductKey(null);
-                  setMobileSelectedSolutionKey(null);
-                }}
-                aria-expanded={mobileOpen}
-              >
-                Menu
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* PLATFORM PANEL */}
-      {open === "platform" && (
-        <FloatingPanel
-          menuRef={menuRef}
-          widthClass={PANEL_W}
-          panelVisible={panelVisible}
-          cancelClose={cancelClose}
-          scheduleClose={scheduleClose}
-        >
-          <div className="grid grid-cols-[260px_1fr]">
-            {/* LEFT */}
-            <div className="p-5 border-r border-black/10">
-              <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-                Products
-              </div>
-
-              <div className={`${LIST_MAX_H} overflow-auto pr-1 space-y-1`}>
-                {products.map((p) => {
-                  const selected = p.key === activeProductKey;
-                  return (
-                    <button
-                      key={p.key}
-                      onMouseEnter={() => setActiveProductKey(p.key)}
-                      onFocus={() => setActiveProductKey(p.key)}
-                      className={[
-                        "relative w-full text-left rounded-xl px-3 py-[9px] transition",
-                        selected
-                          ? "bg-black/[0.035] border border-black/10"
-                          : "border border-transparent hover:bg-black/[0.03]",
-                      ].join(" ")}
-                    >
-                      {/* micro highlight line (premium, not flashy) */}
-                      {selected && (
-                        <span className="pointer-events-none absolute inset-x-2 top-0 h-[1px] bg-white/70" />
-                      )}
-                      <div className="text-[13px] leading-5 text-black font-light">{p.name}</div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-5 pt-5 border-t border-black/10">
-                <Link
-                  href="/platform"
-                  className="inline-flex items-center gap-2 text-[13px] text-black/65 hover:text-black transition font-light"
-                >
-                  Explore the platform →
-                </Link>
-              </div>
-            </div>
-
-            {/* RIGHT */}
-            <div className="p-6">
-              <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-                Overview
-              </div>
-
-              <div className="text-[18px] text-black mb-2 font-light">{activeProduct.name}</div>
-              <div className="text-[14px] leading-6 text-black/65 mb-6 max-w-[760px] font-light">
-                {activeProduct.overview}
-              </div>
-
-              <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-                Capabilities
-              </div>
-
-              <ul className="grid grid-cols-2 gap-x-12 gap-y-3 text-[13px] text-black/75">
-                {activeProduct.features.slice(0, 10).map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <span className="text-black/30 mt-[2px]">▢</span>
-                    <span className="leading-5 font-light">{f}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-7 flex items-center justify-between border-t border-black/10 pt-5">
-                <Link
-                  href={activeProduct.href}
-                  className="inline-flex items-center gap-2 text-[14px] hover:opacity-90 font-light"
-                  style={{ color: PINK }}
-                >
-                  Explore {activeProduct.name} →
-                </Link>
-
-                <Link
-                  href="/compare"
-                  className="inline-flex items-center gap-2 text-[13px] text-black/60 hover:text-black transition font-light"
-                >
-                  Compare products →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </FloatingPanel>
-      )}
-
-      {/* SOLUTIONS PANEL */}
-      {open === "solutions" && (
-        <FloatingPanel
-          menuRef={menuRef}
-          widthClass={PANEL_W}
-          panelVisible={panelVisible}
-          cancelClose={cancelClose}
-          scheduleClose={scheduleClose}
-        >
-          <div className="grid grid-cols-[260px_1fr]">
-            {/* LEFT */}
-            <div className="p-5 border-r border-black/10">
-              <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-                Solutions
-              </div>
-
-              <div className={`${LIST_MAX_H} overflow-auto pr-1 space-y-1`}>
-                {solutions.map((s) => {
-                  const selected = s.key === activeSolutionKey;
-                  return (
-                    <button
-                      key={s.key}
-                      onMouseEnter={() => setActiveSolutionKey(s.key)}
-                      onFocus={() => setActiveSolutionKey(s.key)}
-                      className={[
-                        "relative w-full text-left rounded-xl px-3 py-[9px] transition",
-                        selected
-                          ? "bg-black/[0.035] border border-black/10"
-                          : "border border-transparent hover:bg-black/[0.03]",
-                      ].join(" ")}
-                    >
-                      {selected && (
-                        <span className="pointer-events-none absolute inset-x-2 top-0 h-[1px] bg-white/70" />
-                      )}
-                      <div className="text-[13px] leading-5 text-black font-light">{s.name}</div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-5 pt-5 border-t border-black/10">
-                <Link
-                  href="/solutions"
-                  className="inline-flex items-center gap-2 text-[13px] text-black/65 hover:text-black transition font-light"
-                >
-                  Explore all solutions →
-                </Link>
-              </div>
-            </div>
-
-            {/* RIGHT */}
-            <div className="p-6">
-              <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-                You’re in the right place
-              </div>
-
-              <div className="text-[18px] text-black mb-2 font-light">{activeSolution.headline}</div>
-              <div className="text-[14px] leading-6 text-black/65 mb-6 max-w-[820px] font-light">
-                {activeSolution.summary}
-              </div>
-
-              <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-                Recommended products
-              </div>
-
-              <div className="grid grid-cols-2 gap-x-10 gap-y-4">
-                {activeSolution.recommended.slice(0, 10).map((r) => {
-                  const p = productByKey.get(r.productKey);
-                  if (!p) return null;
-                  return (
-                    <Link
-                      key={r.productKey}
-                      href={p.href}
-                      className="group rounded-2xl border border-black/10 bg-white/70 p-4 hover:border-black/20 transition"
-                    >
-                      <div className="text-[14px] text-black mb-1 font-light">{p.name}</div>
-                      <div className="text-[12px] text-black/60 leading-5 font-light">{r.why}</div>
-                      <div className="mt-2 text-[12px] text-black/45 group-hover:text-black/60 transition font-light">
-                        Explore →
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-
-              <div className="mt-7 flex items-center justify-between border-t border-black/10 pt-5">
-                <Link
-                  href={activeSolution.href}
-                  className="inline-flex items-center gap-2 text-[14px] hover:opacity-90 font-light"
-                  style={{ color: PINK }}
-                >
-                  Explore {activeSolution.name} →
-                </Link>
-
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 text-[13px] text-black/60 hover:text-black transition font-light"
-                >
-                  Talk to our team →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </FloatingPanel>
-      )}
-
-      {/* COMPANY PANEL */}
-      {open === "company" && (
-        <FloatingPanel
-          menuRef={menuRef}
-          widthClass={PANEL_W}
-          panelVisible={panelVisible}
-          cancelClose={cancelClose}
-          scheduleClose={scheduleClose}
-        >
-          <div className="p-6 grid grid-cols-2 gap-5">
-            <MenuCard title="About" description="What Calisto Pro is and why it exists." href="/about" />
-            <MenuCard title="Founder" description="The story and operating philosophy behind Calisto." href="/founder" />
-            <MenuCard title="Blog" description="Product, operations, and real estate insights." href="/blog" />
-            <MenuCard title="Calisto Collection" description="Homes managed by Calisto using Calisto Pro." href="/collection" />
-            <MenuCard title="Calisto One" description="The portal and operational home for Calisto." href="/calisto-one" />
-            <MenuCard title="Contact" description="Talk to our team." href="/contact" />
-          </div>
-        </FloatingPanel>
-      )}
-
-      {/* MOBILE MENU */}
-      {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-[100] bg-white font-sans">
-          <div className="flex items-center justify-between px-4 h-16 border-b border-black/10 bg-white/70 backdrop-blur-2xl">
-            <div className="text-[12px] tracking-[0.24em] text-black/60 font-light">CALISTO PRO</div>
-            <button
-              className="rounded-full border border-black/15 px-3 py-2 text-[13px] bg-white/60 font-light"
-              onClick={() => setMobileOpen(false)}
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-8">
+            <TopNavButton
+              label="Platform"
+              open={open === "platform"}
+              onOpen={() => setOpen("platform")}
+            />
+            <TopNavButton
+              label="Solutions"
+              open={open === "solutions"}
+              onOpen={() => setOpen("solutions")}
+            />
+            <Link
+              href="/pricing"
+              className="text-[14px] font-light text-black/70 hover:text-black transition"
+              onClick={closeAll}
             >
-              Close
-            </button>
-          </div>
+              Pricing
+            </Link>
+            <TopNavButton
+              label="Company"
+              open={open === "company"}
+              onOpen={() => setOpen("company")}
+            />
+          </nav>
 
-          <div className="px-4 pt-4">
-            <div className="flex gap-2">
-              <button
-                className={`flex-1 rounded-full border px-3 py-2 text-[13px] font-light ${
-                  mobileTab === "platform" ? "border-black/30" : "border-black/10"
-                }`}
-                onClick={() => {
-                  setMobileTab("platform");
-                  setMobileSelectedProductKey(null);
-                }}
-              >
-                Platform
-              </button>
-              <button
-                className={`flex-1 rounded-full border px-3 py-2 text-[13px] font-light ${
-                  mobileTab === "solutions" ? "border-black/30" : "border-black/10"
-                }`}
-                onClick={() => {
-                  setMobileTab("solutions");
-                  setMobileSelectedSolutionKey(null);
-                }}
-              >
-                Solutions
-              </button>
-            </div>
-          </div>
-
-          <div className="px-4 py-4 overflow-auto h-[calc(100vh-64px-72px)]">
-            {mobileTab === "platform" ? (
-              mobileSelectedProductKey ? (
-                <MobileDetail
-                  title={productByKey.get(mobileSelectedProductKey)?.name ?? "Product"}
-                  subtitle={productByKey.get(mobileSelectedProductKey)?.overview ?? ""}
-                  bullets={productByKey.get(mobileSelectedProductKey)?.features ?? []}
-                  ctaLabel={`Explore ${productByKey.get(mobileSelectedProductKey)?.name ?? "Product"} →`}
-                  ctaHref={productByKey.get(mobileSelectedProductKey)?.href ?? "/"}
-                  onBack={() => setMobileSelectedProductKey(null)}
-                />
-              ) : (
-                <div className="space-y-2">
-                  {products.map((p) => (
-                    <button
-                      key={p.key}
-                      className="w-full text-left rounded-2xl border border-black/10 bg-white/70 p-4"
-                      onClick={() => setMobileSelectedProductKey(p.key)}
-                    >
-                      <div className="text-[14px] text-black font-light">{p.name}</div>
-                      <div className="text-[12px] text-black/60 mt-1 line-clamp-2 font-light">{p.overview}</div>
-                    </button>
-                  ))}
-                  <Link className="block text-[13px] text-black/70 pt-3 font-light" href="/platform">
-                    Explore the platform →
-                  </Link>
-                </div>
-              )
-            ) : mobileSelectedSolutionKey ? (
-              <MobileSolutionDetail
-                solution={solutions.find((s) => s.key === mobileSelectedSolutionKey)!}
-                productByKey={productByKey}
-                onBack={() => setMobileSelectedSolutionKey(null)}
-              />
-            ) : (
-              <div className="space-y-2">
-                {solutions.map((s) => (
-                  <button
-                    key={s.key}
-                    className="w-full text-left rounded-2xl border border-black/10 bg-white/70 p-4"
-                    onClick={() => setMobileSelectedSolutionKey(s.key)}
-                  >
-                    <div className="text-[14px] text-black font-light">{s.name}</div>
-                    <div className="text-[12px] text-black/60 mt-1 line-clamp-2 font-light">{s.headline}</div>
-                  </button>
-                ))}
-                <Link className="block text-[13px] text-black/70 pt-3 font-light" href="/solutions">
-                  Explore all solutions →
-                </Link>
-              </div>
-            )}
-          </div>
-
-          <div className="px-4 py-4 border-t border-black/10 grid grid-cols-2 gap-3">
+          {/* Actions */}
+          <div className="hidden md:flex items-center gap-3">
             <a
               href="https://one.calistoco.com/"
-              className="inline-flex justify-center items-center rounded-full px-4 py-3 text-[14px] border border-black/10 font-light shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
-              style={{ background: PINK, color: "#000" }}
+              className="inline-flex items-center rounded-full px-4 py-2 text-[14px] font-light transition border border-black/10 hover:border-black/20"
+              style={{ background: PINK, color: "#000000" }}
             >
               Log In
             </a>
             <Link
               href="/contact"
-              className="inline-flex justify-center items-center rounded-full border border-black/10 px-4 py-3 text-[14px] font-light"
+              className="inline-flex items-center rounded-full border border-black/15 px-4 py-2 text-[14px] font-light hover:border-black/30 transition"
+              onClick={closeAll}
             >
               Talk to our team
             </Link>
+          </div>
+
+          {/* Mobile trigger */}
+          <button
+            className="md:hidden inline-flex items-center justify-center rounded-full border border-black/15 px-3 py-2 text-[14px] font-light"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-expanded={mobileOpen}
+          >
+            Menu
+          </button>
+        </div>
+      </div>
+
+      {/* CLICK-CATCH OVERLAY (no dim, just closes) */}
+      {open && (
+        <button
+          aria-label="Close menu overlay"
+          className="fixed inset-0 z-40 cursor-default"
+          onClick={() => setOpen(null)}
+          style={{ background: "transparent" }}
+        />
+      )}
+
+      {/* PLATFORM MEGA MENU */}
+      {open === "platform" && (
+        <MegaMenuFrame onMouseLeave={() => setOpen(null)}>
+          <div className="grid grid-cols-[240px_1fr] gap-10">
+            {/* LEFT: PRODUCT LIST */}
+            <div>
+              <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">
+                PRODUCTS
+              </div>
+              <div className="space-y-[2px]">
+                {platformItems.map((p) => {
+                  const active = activeProduct.key === p.key;
+                  return (
+                    <button
+                      key={p.key}
+                      onMouseEnter={() => setActiveProduct(p)}
+                      onFocus={() => setActiveProduct(p)}
+                      className={[
+                        "w-full text-left rounded-lg px-3 py-2 transition",
+                        "text-[14px] font-light",
+                        active
+                          ? "bg-black/[0.04] text-black"
+                          : "text-black/80 hover:bg-black/[0.03] hover:text-black",
+                      ].join(" ")}
+                    >
+                      {p.name}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-5 border-t border-black/10 pt-4">
+                <Link
+                  href="/platform"
+                  onClick={closeAll}
+                  className="text-[13px] font-light text-black/70 hover:text-black transition inline-flex items-center gap-2"
+                >
+                  Explore the platform <span aria-hidden>→</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* RIGHT: PRODUCT DETAILS */}
+            <div className="rounded-2xl border border-black/10 bg-white p-6">
+              <div className="flex items-start justify-between gap-6">
+                <div className="min-w-0">
+                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-2">
+                    {activeProduct.category.toUpperCase()}
+                  </div>
+
+                  <div className="text-[22px] font-light tracking-[-0.01em] text-black mb-2">
+                    {activeProduct.name}
+                  </div>
+
+                  <div className="text-[14px] font-light leading-relaxed text-black/70 max-w-[62ch]">
+                    {activeProduct.overview}
+                  </div>
+                </div>
+
+                {/* Optional product image (placeholder ok) */}
+                <div className="hidden lg:block w-[220px] shrink-0">
+                  <div className="aspect-[4/3] rounded-xl overflow-hidden border border-black/10 bg-black/[0.02]">
+                    {activeProduct.imageSrc ? (
+                      <img
+                        src={activeProduct.imageSrc}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 border-t border-black/10 pt-5">
+                <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">
+                  CAPABILITIES
+                </div>
+
+                <ul className="grid grid-cols-2 gap-x-10 gap-y-2 text-[13px] font-light text-black/75">
+                  {activeProduct.features.slice(0, 10).map((f) => (
+                    <li key={f} className="flex items-start gap-2">
+                      <span className="mt-[7px] h-[4px] w-[4px] rounded-full bg-black/30" />
+                      <span className="leading-relaxed">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-6 flex items-center justify-between">
+                  <Link
+                    href={activeProduct.href}
+                    onClick={closeAll}
+                    className="inline-flex items-center gap-2 text-[14px] font-light"
+                    style={{ color: PINK }}
+                  >
+                    Explore {activeProduct.name} <span aria-hidden>→</span>
+                  </Link>
+
+                  <Link
+                    href="/platform/compare"
+                    onClick={closeAll}
+                    className="text-[13px] font-light text-black/60 hover:text-black transition inline-flex items-center gap-2"
+                  >
+                    Compare products <span aria-hidden>→</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </MegaMenuFrame>
+      )}
+
+      {/* SOLUTIONS MEGA MENU */}
+      {open === "solutions" && (
+        <MegaMenuFrame onMouseLeave={() => setOpen(null)}>
+          <div className="grid grid-cols-[260px_1fr] gap-10">
+            {/* LEFT: CUSTOMER TYPES */}
+            <div>
+              <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">
+                SOLUTIONS
+              </div>
+              <div className="space-y-[2px]">
+                {solutions.map((s) => {
+                  const active = activeSolution.key === s.key;
+                  return (
+                    <button
+                      key={s.key}
+                      onMouseEnter={() => setActiveSolution(s)}
+                      onFocus={() => setActiveSolution(s)}
+                      className={[
+                        "w-full text-left rounded-lg px-3 py-2 transition",
+                        "text-[14px] font-light",
+                        active
+                          ? "bg-black/[0.04] text-black"
+                          : "text-black/80 hover:bg-black/[0.03] hover:text-black",
+                      ].join(" ")}
+                    >
+                      {s.name}
+                      <div className="text-[12px] font-light text-black/55 mt-1 leading-snug">
+                        {s.subtitle}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-5 border-t border-black/10 pt-4">
+                <Link
+                  href="/solutions"
+                  onClick={closeAll}
+                  className="text-[13px] font-light text-black/70 hover:text-black transition inline-flex items-center gap-2"
+                >
+                  Explore solutions <span aria-hidden>→</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* RIGHT: SOLUTION DETAIL */}
+            <div className="rounded-2xl border border-black/10 bg-white p-6">
+              <div className="text-[22px] font-light tracking-[-0.01em] text-black">
+                {activeSolution.name}
+              </div>
+              <div className="mt-2 text-[14px] font-light leading-relaxed text-black/70">
+                {activeSolution.subtitle}
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-10">
+                <div>
+                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">
+                    COMMON GOALS
+                  </div>
+                  <ul className="space-y-2 text-[13px] font-light text-black/75">
+                    {activeSolution.goals.map((g) => (
+                      <li key={g} className="flex items-start gap-2">
+                        <span className="mt-[7px] h-[4px] w-[4px] rounded-full bg-black/30" />
+                        <span className="leading-relaxed">{g}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">
+                    RECOMMENDED PRODUCTS
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {activeSolution.recommended.map((r) => (
+                      <Link
+                        key={r.href}
+                        href={r.href}
+                        onClick={closeAll}
+                        className="rounded-lg border border-black/10 px-3 py-2 text-[13px] font-light text-black/75 hover:text-black hover:border-black/20 hover:bg-black/[0.02] transition"
+                      >
+                        {r.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 border-t border-black/10 pt-5">
+                <Link
+                  href={activeSolution.href}
+                  onClick={closeAll}
+                  className="inline-flex items-center gap-2 text-[14px] font-light"
+                  style={{ color: PINK }}
+                >
+                  Explore {activeSolution.name} <span aria-hidden>→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </MegaMenuFrame>
+      )}
+
+      {/* COMPANY MEGA MENU */}
+      {open === "company" && (
+        <MegaMenuFrame onMouseLeave={() => setOpen(null)}>
+          <div className="grid grid-cols-2 gap-6">
+            {companyItems.map((c) => (
+              <Link
+                key={c.href}
+                href={c.href}
+                onClick={closeAll}
+                className="rounded-2xl border border-black/10 bg-white px-5 py-4 hover:border-black/20 hover:bg-black/[0.02] transition"
+              >
+                <div className="text-[15px] font-light text-black">{c.title}</div>
+                <div className="mt-1 text-[13px] font-light text-black/65 leading-relaxed">
+                  {c.description}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </MegaMenuFrame>
+      )}
+
+      {/* MOBILE DRAWER */}
+      {mobileOpen && (
+        <div className="md:hidden border-t border-black/10 bg-white">
+          <div className="mx-auto px-4 py-4" style={{ maxWidth: MAX_W }}>
+            <div className="space-y-2">
+              <MobileSection title="Platform">
+                <div className="grid grid-cols-1 gap-1">
+                  {platformItems.map((p) => (
+                    <Link
+                      key={p.key}
+                      href={p.href}
+                      onClick={closeAll}
+                      className="rounded-lg px-3 py-2 text-[14px] font-light text-black/80 hover:bg-black/[0.03] hover:text-black transition"
+                    >
+                      {p.name}
+                      <div className="text-[12px] font-light text-black/55 mt-1">
+                        {p.category}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <Link
+                  href="/platform"
+                  onClick={closeAll}
+                  className="mt-3 inline-flex items-center gap-2 text-[13px] font-light text-black/70"
+                >
+                  Explore the platform <span aria-hidden>→</span>
+                </Link>
+              </MobileSection>
+
+              <MobileSection title="Solutions">
+                <div className="grid grid-cols-1 gap-2">
+                  {solutions.map((s) => (
+                    <Link
+                      key={s.key}
+                      href={s.href}
+                      onClick={closeAll}
+                      className="rounded-lg border border-black/10 px-3 py-2 text-[14px] font-light text-black/80 hover:border-black/20 hover:bg-black/[0.02] transition"
+                    >
+                      {s.name}
+                      <div className="text-[12px] font-light text-black/55 mt-1">
+                        {s.subtitle}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </MobileSection>
+
+              <Link
+                href="/pricing"
+                onClick={closeAll}
+                className="block rounded-lg px-3 py-2 text-[14px] font-light text-black/80 hover:bg-black/[0.03] hover:text-black transition"
+              >
+                Pricing
+              </Link>
+
+              <MobileSection title="Company">
+                <div className="grid grid-cols-1 gap-2">
+                  {companyItems.map((c) => (
+                    <Link
+                      key={c.href}
+                      href={c.href}
+                      onClick={closeAll}
+                      className="rounded-lg border border-black/10 px-3 py-2 text-[14px] font-light text-black/80 hover:border-black/20 hover:bg-black/[0.02] transition"
+                    >
+                      {c.title}
+                      <div className="text-[12px] font-light text-black/55 mt-1">
+                        {c.description}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </MobileSection>
+
+              <div className="pt-2 flex gap-2">
+                <a
+                  href="https://one.calistoco.com/"
+                  className="flex-1 inline-flex items-center justify-center rounded-full px-4 py-2 text-[14px] font-light border border-black/10"
+                  style={{ background: PINK, color: "#000000" }}
+                >
+                  Log In
+                </a>
+                <Link
+                  href="/contact"
+                  onClick={closeAll}
+                  className="flex-1 inline-flex items-center justify-center rounded-full border border-black/15 px-4 py-2 text-[14px] font-light"
+                >
+                  Talk to our team
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -778,46 +803,32 @@ export default function ProHeader() {
   );
 }
 
-/** Floating glass panel with subtle motion */
-function FloatingPanel({
+/** Centered, non-fullwidth mega menu frame */
+function MegaMenuFrame({
   children,
-  menuRef,
-  widthClass,
-  panelVisible,
-  cancelClose,
-  scheduleClose,
+  onMouseLeave,
 }: {
   children: React.ReactNode;
-  menuRef: React.RefObject<HTMLDivElement>;
-  widthClass: string;
-  panelVisible: boolean;
-  cancelClose: () => void;
-  scheduleClose: () => void;
+  onMouseLeave: () => void;
 }) {
   return (
-    <div className="absolute inset-x-0 top-16" onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
-      <div className={`mx-auto ${widthClass} px-4`}>
-        <div
-          ref={menuRef}
-          className={[
-            "rounded-[28px] border border-black/10 bg-white/70 backdrop-blur-2xl",
-            "shadow-[0_30px_90px_rgba(0,0,0,0.12)] overflow-hidden",
-            "transition duration-200 ease-out",
-            panelVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1",
-          ].join(" ")}
-        >
-          {/* top micro highlight */}
-          <div className="pointer-events-none h-[1px] bg-white/70" />
-          {children}
+    <div className="relative z-50">
+      <div
+        className="absolute left-1/2 top-0 -translate-x-1/2 pt-3"
+        onMouseLeave={onMouseLeave}
+        style={{ width: `min(${MAX_W}px, calc(100vw - 24px))` }}
+      >
+        <div className="rounded-[28px] border border-black/10 bg-white shadow-[0_20px_70px_rgba(0,0,0,0.10)]">
+          <div className="p-7">{children}</div>
         </div>
-        <div className="h-3" />
       </div>
+      {/* spacer so layout doesn't jump */}
+      <div className="h-[420px]" />
     </div>
   );
 }
 
-/** Top nav button */
-function NavButton({
+function TopNavButton({
   label,
   open,
   onOpen,
@@ -830,109 +841,34 @@ function NavButton({
     <button
       onMouseEnter={onOpen}
       onFocus={onOpen}
-      className="text-[14px] text-black/70 hover:text-black transition inline-flex items-center gap-2 font-light"
+      className="text-[14px] font-light text-black/70 hover:text-black transition inline-flex items-center gap-2"
       aria-expanded={open}
     >
       {label}
-      <span className="text-black/30">▾</span>
+      <span className="text-black/35">▾</span>
     </button>
   );
 }
 
-function MenuCard({ title, description, href }: { title: string; description: string; href: string }) {
-  return (
-    <Link
-      href={href}
-      className="group rounded-2xl border border-black/10 bg-white/70 p-5 hover:border-black/20 transition"
-    >
-      <div className="text-[14px] text-black mb-1 font-light">{title}</div>
-      <div className="text-[12px] text-black/60 leading-5 font-light">{description}</div>
-      <div className="mt-3 text-[12px] text-black/45 group-hover:text-black/60 transition font-light">
-        Explore →
-      </div>
-    </Link>
-  );
-}
-
-function MobileDetail({
+function MobileSection({
   title,
-  subtitle,
-  bullets,
-  ctaLabel,
-  ctaHref,
-  onBack,
+  children,
 }: {
   title: string;
-  subtitle: string;
-  bullets: string[];
-  ctaLabel: string;
-  ctaHref: string;
-  onBack: () => void;
+  children: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="font-light">
-      <button className="text-[13px] text-black/70 mb-4" onClick={onBack}>
-        ← Back
+    <div className="rounded-xl border border-black/10 bg-white">
+      <button
+        className="w-full flex items-center justify-between px-3 py-2 text-[14px] font-light text-black/80"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span>{title}</span>
+        <span className="text-black/35">{open ? "−" : "+"}</span>
       </button>
-      <div className="text-[18px] text-black mb-2">{title}</div>
-      <div className="text-[13px] text-black/65 leading-6 mb-5">{subtitle}</div>
-
-      <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-        Capabilities
-      </div>
-      <ul className="space-y-2 text-[13px] text-black/75 mb-6">
-        {bullets.slice(0, 10).map((b) => (
-          <li key={b} className="flex items-start gap-2">
-            <span className="text-black/30 mt-[2px]">▢</span>
-            <span className="leading-5">{b}</span>
-          </li>
-        ))}
-      </ul>
-
-      <Link href={ctaHref} className="inline-flex items-center gap-2 text-[14px]" style={{ color: PINK }}>
-        {ctaLabel}
-      </Link>
-    </div>
-  );
-}
-
-function MobileSolutionDetail({
-  solution,
-  productByKey,
-  onBack,
-}: {
-  solution: Solution;
-  productByKey: Map<string, Product>;
-  onBack: () => void;
-}) {
-  return (
-    <div className="font-light">
-      <button className="text-[13px] text-black/70 mb-4" onClick={onBack}>
-        ← Back
-      </button>
-
-      <div className="text-[18px] text-black mb-2">{solution.name}</div>
-      <div className="text-[13px] text-black/65 leading-6 mb-5">{solution.summary}</div>
-
-      <div className="text-[11px] uppercase tracking-[0.24em] text-black/45 mb-3 font-extralight">
-        Recommended products
-      </div>
-      <div className="space-y-2 mb-6">
-        {solution.recommended.map((r) => {
-          const p = productByKey.get(r.productKey);
-          if (!p) return null;
-          return (
-            <Link key={p.key} href={p.href} className="block rounded-2xl border border-black/10 bg-white/70 p-4">
-              <div className="text-[14px] text-black">{p.name}</div>
-              <div className="text-[12px] text-black/60 mt-1 leading-5">{r.why}</div>
-            </Link>
-          );
-        })}
-      </div>
-
-      <Link href={solution.href} className="inline-flex items-center gap-2 text-[14px]" style={{ color: PINK }}>
-        Explore {solution.name} →
-      </Link>
+      {open && <div className="px-3 pb-3">{children}</div>}
     </div>
   );
 }
