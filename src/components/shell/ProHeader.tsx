@@ -5,18 +5,146 @@ import { useEffect, useMemo, useState } from "react";
 
 const PINK = "#F6C1D9";
 
-type MegaItem = {
+/**
+ * Product-level model (this is what lets each product stand on its own)
+ */
+type PlatformProduct = {
+  key: string;
+  name: string;
+  overview: string;
+  benefits: string[];
+  href: string;
+};
+
+type SimpleItem = {
   title: string;
   description: string;
   href: string;
-  icon: string; // simple text icon placeholder for now
+  icon: string;
 };
 
 export default function ProHeader() {
   const [open, setOpen] = useState<null | "platform" | "solutions" | "company">(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // close menus on Escape
+  /**
+   * PLATFORM PRODUCTS (left column)
+   * First product will be selected by default
+   */
+  const platformItems = useMemo<PlatformProduct[]>(
+    () => [
+      {
+        key: "sign",
+        name: "Calisto Sign",
+        overview:
+          "Enterprise-grade agreements, approvals, and signature workflows built directly into your operational stack.",
+        benefits: [
+          "Multi-party workflows",
+          "Embedded approvals & signatures",
+          "Audit trails & compliance",
+          "Faster execution than DocuSign-style tools",
+        ],
+        href: "/sign",
+      },
+      {
+        key: "navigator",
+        name: "Calisto Navigator",
+        overview:
+          "Guest and operator experience layer replacing fragmented tools like Duve or Chekin.",
+        benefits: [
+          "Guest messaging & automation",
+          "Check-in & identity flows",
+          "Upsells and service requests",
+          "Unified guest profile",
+        ],
+        href: "/navigator",
+      },
+      {
+        key: "ops",
+        name: "Calisto Ops",
+        overview:
+          "Operational command center for properties, teams, and workflows.",
+        benefits: [
+          "Task orchestration",
+          "Team workflows",
+          "Operational visibility",
+          "Cross-product coordination",
+        ],
+        href: "/ops",
+      },
+      {
+        key: "signal",
+        name: "Calisto Signal",
+        overview:
+          "Smart monitoring and alerting layer for properties and assets.",
+        benefits: [
+          "Noise & occupancy monitoring",
+          "Security signals",
+          "Automated escalation",
+          "Human response integration",
+        ],
+        href: "/signal",
+      },
+    ],
+    []
+  );
+
+  /**
+   * ACTIVE PRODUCT (right panel)
+   * Default = first product (no wasted space)
+   */
+  const [activeProduct, setActiveProduct] = useState<PlatformProduct>(
+    platformItems[0]
+  );
+
+  /**
+   * Simple menus (unchanged for now)
+   */
+  const solutionsItems = useMemo<SimpleItem[]>(
+    () => [
+      {
+        title: "Solution 1",
+        description: "Who it’s for and what it solves.",
+        href: "/solutions/solution-1",
+        icon: "◻︎",
+      },
+      {
+        title: "Solution 2",
+        description: "Who it’s for and what it solves.",
+        href: "/solutions/solution-2",
+        icon: "◻︎",
+      },
+    ],
+    []
+  );
+
+  const companyItems = useMemo<SimpleItem[]>(
+    () => [
+      {
+        title: "About",
+        description: "What Calisto Pro is and why it exists.",
+        href: "/company/about",
+        icon: "◦",
+      },
+      {
+        title: "Security",
+        description: "Trust, privacy, and compliance.",
+        href: "/company/security",
+        icon: "◦",
+      },
+      {
+        title: "Contact",
+        description: "Talk to our team.",
+        href: "/contact",
+        icon: "◦",
+      },
+    ],
+    []
+  );
+
+  /**
+   * Close on ESC
+   */
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(null);
@@ -24,38 +152,6 @@ export default function ProHeader() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
-
-  const platformItems = useMemo<MegaItem[]>(
-    () => [
-      { title: "Feature 1", description: "Short benefit statement for the platform.", href: "/platform/feature-1", icon: "◼︎" },
-      { title: "Feature 2", description: "Short benefit statement for the platform.", href: "/platform/feature-2", icon: "◼︎" },
-      { title: "Feature 3", description: "Short benefit statement for the platform.", href: "/platform/feature-3", icon: "◼︎" },
-      { title: "Feature 4", description: "Short benefit statement for the platform.", href: "/platform/feature-4", icon: "◼︎" },
-      { title: "Feature 5", description: "Short benefit statement for the platform.", href: "/platform/feature-5", icon: "◼︎" },
-      { title: "Feature 6", description: "Short benefit statement for the platform.", href: "/platform/feature-6", icon: "◼︎" },
-    ],
-    []
-  );
-
-  const solutionsItems = useMemo<MegaItem[]>(
-    () => [
-      { title: "Solution 1", description: "Who it’s for + what it solves.", href: "/solutions/solution-1", icon: "◻︎" },
-      { title: "Solution 2", description: "Who it’s for + what it solves.", href: "/solutions/solution-2", icon: "◻︎" },
-      { title: "Solution 3", description: "Who it’s for + what it solves.", href: "/solutions/solution-3", icon: "◻︎" },
-      { title: "Solution 4", description: "Who it’s for + what it solves.", href: "/solutions/solution-4", icon: "◻︎" },
-    ],
-    []
-  );
-
-  const companyItems = useMemo<MegaItem[]>(
-    () => [
-      { title: "About", description: "What Calisto Pro is and why it exists.", href: "/company/about", icon: "◦" },
-      { title: "Founder", description: "Leadership and story.", href: "/company/founder", icon: "◦" },
-      { title: "Security", description: "Trust, privacy, compliance.", href: "/company/security", icon: "◦" },
-      { title: "Contact", description: "Talk to our team.", href: "/contact", icon: "◦" },
-    ],
-    []
-  );
 
   return (
     <header className="sticky top-0 z-50 border-b border-black/10 bg-white/85 backdrop-blur">
@@ -68,20 +164,37 @@ export default function ProHeader() {
               alt="Calisto"
               className="h-7 w-auto"
             />
-            <span className="text-[13px] tracking-[0.18em] text-black/70">PRO</span>
+            <span className="text-[13px] tracking-[0.18em] text-black/70">
+              PRO
+            </span>
           </Link>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-7">
-            <TopNavButton label="Platform" isOpen={open === "platform"} onOpen={() => setOpen("platform")} onClose={() => setOpen(null)} />
-            <TopNavButton label="Solutions" isOpen={open === "solutions"} onOpen={() => setOpen("solutions")} onClose={() => setOpen(null)} />
-            <Link className="text-[14px] text-black/75 hover:text-black transition" href="/pricing">
+            <NavButton
+              label="Platform"
+              open={open === "platform"}
+              onOpen={() => setOpen("platform")}
+            />
+            <NavButton
+              label="Solutions"
+              open={open === "solutions"}
+              onOpen={() => setOpen("solutions")}
+            />
+            <Link
+              href="/pricing"
+              className="text-[14px] text-black/75 hover:text-black transition"
+            >
               Pricing
             </Link>
-            <TopNavButton label="Company" isOpen={open === "company"} onOpen={() => setOpen("company")} onClose={() => setOpen(null)} />
+            <NavButton
+              label="Company"
+              open={open === "company"}
+              onOpen={() => setOpen("company")}
+            />
           </nav>
 
-          {/* Right actions */}
+          {/* Actions */}
           <div className="flex items-center gap-3">
             <a
               href="https://one.calistoco.com/"
@@ -89,66 +202,62 @@ export default function ProHeader() {
             >
               Log In
             </a>
-
             <Link
               href="/contact"
               className="hidden md:inline-flex items-center rounded-full border border-black/15 px-4 py-2 text-[14px] hover:border-black/30 transition"
             >
               Talk to our team
             </Link>
-
-            {/* Mobile */}
-            <button
-              className="md:hidden inline-flex items-center rounded-full border border-black/15 px-3 py-2 text-[14px]"
-              onClick={() => setMobileOpen((v) => !v)}
-              aria-expanded={mobileOpen}
-              aria-label="Open menu"
-            >
-              Menu
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Mega panel area (desktop) */}
-      <div className="hidden md:block">
-        {open && (
-          <>
-            <div
-              className="absolute inset-x-0 top-16 h-[calc(100vh-4rem)]"
-              onMouseEnter={() => {}}
-              onMouseLeave={() => setOpen(null)}
-            >
-              {/* Backdrop */}
-              <div className="absolute inset-0 bg-black/10" />
-
-              {/* Panel */}
-              <div className="relative mx-auto max-w-6xl px-4 pt-4">
-                <MegaPanel
-                  title={open === "platform" ? "Platform" : open === "solutions" ? "Solutions" : "Company"}
-                  items={open === "platform" ? platformItems : open === "solutions" ? solutionsItems : companyItems}
-                  accentHex={PINK}
-                />
-              </div>
+      {/* PLATFORM MEGA MENU */}
+      {open === "platform" && (
+        <div
+          className="absolute inset-x-0 top-16 bg-white border-t border-black/10"
+          onMouseLeave={() => setOpen(null)}
+        >
+          <div className="mx-auto max-w-6xl px-6 py-8 grid grid-cols-[260px_1fr] gap-10">
+            {/* LEFT: PRODUCT LIST */}
+            <div className="space-y-2">
+              {platformItems.map((p) => (
+                <button
+                  key={p.key}
+                  onMouseEnter={() => setActiveProduct(p)}
+                  className={`w-full text-left rounded-xl px-4 py-3 transition ${
+                    activeProduct.key === p.key
+                      ? "bg-black/5"
+                      : "hover:bg-black/5"
+                  }`}
+                >
+                  <div className="text-[14px] text-black">{p.name}</div>
+                </button>
+              ))}
             </div>
-          </>
-        )}
-      </div>
 
-      {/* Mobile menu (simple for now) */}
-      {mobileOpen && (
-        <div className="md:hidden border-t border-black/10 bg-white">
-          <div className="cal-main-inner">
-            <div className="py-4 space-y-2">
-              <MobileLink href="/pricing" label="Pricing" onClick={() => setMobileOpen(false)} />
-              <MobileLink href="/contact" label="Talk to our team" onClick={() => setMobileOpen(false)} />
-              <a
-                href="https://one.calistoco.com/"
-                className="block rounded-xl px-3 py-2 text-[14px] hover:bg-black/5"
-                onClick={() => setMobileOpen(false)}
+            {/* RIGHT: PRODUCT DETAILS */}
+            <div className="rounded-2xl border border-black/10 p-6">
+              <div className="text-[16px] text-black mb-2">
+                {activeProduct.name}
+              </div>
+              <div className="text-[14px] text-black/65 mb-4">
+                {activeProduct.overview}
+              </div>
+
+              <ul className="grid grid-cols-2 gap-y-2 text-[13px] text-black/70 mb-6">
+                {activeProduct.benefits.map((b) => (
+                  <li key={b}>• {b}</li>
+                ))}
+              </ul>
+
+              <Link
+                href={activeProduct.href}
+                className="inline-flex items-center gap-2 text-[14px]"
+                style={{ color: PINK }}
               >
-                Log In
-              </a>
+                Explore {activeProduct.name} →
+              </Link>
             </div>
           </div>
         </div>
@@ -157,103 +266,26 @@ export default function ProHeader() {
   );
 }
 
-function TopNavButton({
+/**
+ * Simple top-level nav button
+ */
+function NavButton({
   label,
-  isOpen,
+  open,
   onOpen,
-  onClose,
 }: {
   label: string;
-  isOpen: boolean;
+  open: boolean;
   onOpen: () => void;
-  onClose: () => void;
 }) {
   return (
     <button
-      type="button"
-      className="text-[14px] text-black/75 hover:text-black transition inline-flex items-center gap-2"
       onMouseEnter={onOpen}
-      onFocus={onOpen}
-      aria-expanded={isOpen}
-    >
-      <span>{label}</span>
-      <span className="text-black/35">▾</span>
-      {/* Optional subtle underline when open */}
-      <span
-        aria-hidden="true"
-        className="block h-[2px] w-0"
-        style={{
-          background: isOpen ? "#000" : "transparent",
-        }}
-      />
-    </button>
-  );
-}
-
-function MegaPanel({
-  title,
-  items,
-  accentHex,
-}: {
-  title: string;
-  items: MegaItem[];
-  accentHex: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
-      <div className="px-6 py-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-[12px] uppercase tracking-[0.18em] text-black/45">{title}</div>
-          <div className="h-1 w-14 rounded-full" style={{ background: accentHex }} />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          {items.map((it) => (
-            <Link
-              key={it.href}
-              href={it.href}
-              className="group rounded-2xl border border-black/10 p-4 transition hover:-translate-y-[1px] hover:shadow-md"
-              style={{ willChange: "transform" }}
-            >
-              <div className="flex items-start gap-3">
-                <div
-                  className="mt-[2px] inline-flex h-8 w-8 items-center justify-center rounded-xl border"
-                  style={{ borderColor: "rgba(0,0,0,0.12)" }}
-                >
-                  <span className="text-black/60 text-[12px]">{it.icon}</span>
-                </div>
-                <div className="min-w-0">
-                  <div className="text-[14px] text-black">{it.title}</div>
-                  <div className="text-[12px] text-black/55 mt-1">{it.description}</div>
-                  <div className="mt-3 text-[12px] text-black/55 group-hover:text-black transition">
-                    Explore <span style={{ color: accentHex }}>→</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MobileLink({
-  href,
-  label,
-  onClick,
-}: {
-  href: string;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="block rounded-xl px-3 py-2 text-[14px] hover:bg-black/5"
+      className="text-[14px] text-black/75 hover:text-black transition inline-flex items-center gap-2"
+      aria-expanded={open}
     >
       {label}
-    </Link>
+      <span className="text-black/35">▾</span>
+    </button>
   );
 }
