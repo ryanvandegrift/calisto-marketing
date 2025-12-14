@@ -1,10 +1,14 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
+const config = {
+  // Merged content paths
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    // The following paths cover what was in the second config object:
+    "./app/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {
@@ -18,7 +22,17 @@ const config: Config = {
         'cal-border-light': 'rgba(0,0,0,0.08)',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        // Merged font definitions: using the CSS variable first (from the second config),
+        // then the explicit fonts (from the first config).
+        sans: [
+          "var(--font-inter)", 
+          'Inter', 
+          'system-ui', 
+          '-apple-system', 
+          'BlinkMacSystemFont', 
+          'Segoe UI', 
+          'sans-serif'
+        ],
       },
       boxShadow: {
         'cal-xs': '0 1px 4px rgba(0,0,0,0.04)',
@@ -44,5 +58,6 @@ const config: Config = {
     },
   },
   plugins: [],
-};
-export default config;
+} satisfies Config; // Using 'satisfies Config' is a modern, good practice
+
+export default config; // Single default export
