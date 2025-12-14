@@ -12,10 +12,13 @@ export default function ProHeader() {
       <div className="cal-main-inner" style={{ paddingTop: 0, paddingBottom: 0 }}>
         <div className="flex h-16 items-center justify-between gap-4">
           <Link href="/" className="inline-flex items-center gap-3">
-            <span className="h-8 w-8 rounded-full border border-black/15" aria-hidden="true" />
-            <span className="text-sm tracking-wide text-black/80">CALISTO PRO</span>
-          </Link>
-
+  <img
+    src="https://calistomedia.blob.core.windows.net/calisto-one/calisto_logo_300.png"
+    alt="Calisto"
+    className="h-8 w-auto"
+  />
+  <span className="text-sm tracking-wide text-black/100">Calisto Pro</span>
+</Link>
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
             <div
