@@ -1,0 +1,6 @@
+{
+  "/(pro)/assure/page": "app/(pro)/assure/page.js",
+  "/(pro)/signal/page": "app/(pro)/signal/page.js",
+  "/(pro)/purview/page": "app/(pro)/purview/page.js",
+  "/(pro)/page": "app/(pro)/page.js"
+}

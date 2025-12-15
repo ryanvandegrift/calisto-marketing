@@ -1,19 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-
-const PINK = "#F6C1D9";
-const MAX_W = 1160;
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type PlatformProduct = {
   key: string;
   name: string;
-  category: string; // small eyebrow label
+  category: string;
   overview: string;
-  features: string[]; // 8–10
+  features: string[];
   href: string;
-  imageSrc?: string; // optional placeholder
+  imageSrc?: string;
 };
 
 type Solution = {
@@ -31,9 +30,24 @@ type SimpleItem = {
   href: string;
 };
 
+type MenuKey = null | "platform" | "solutions" | "company" | "pricing";
+
+// --- Tailwind-safe classes (STATIC STRINGS; no template building) ---
+const PINK_BG = "bg-[rgba(246,193,217,0.30)]";
+const PINK_HOVER = "hover:bg-[rgba(246,193,217,0.30)]";
+const MENU_CARD = "rounded-[2px] bg-white shadow-[0_20px_70px_rgba(0,0,0,0.12)]";
+const ITEM_BASE = "rounded-[2px] px-3 py-2 transition text-black";
+const ITEM_TEXT_14 = "text-[14px] font-light";
+const ITEM_TEXT_13 = "text-[13px] font-light";
+
 export default function ProHeader() {
-  const [open, setOpen] = useState<null | "platform" | "solutions" | "company">(null);
+  const pathname = usePathname();
+
+  const [open, setOpen] = useState<MenuKey>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const [hideHeader, setHideHeader] = useState(false);
+  const closeTimer = useRef<number | null>(null);
 
   const platformItems = useMemo<PlatformProduct[]>(
     () => [
@@ -41,8 +55,7 @@ export default function ProHeader() {
         key: "deals",
         name: "Calisto Deals",
         category: "Real estate CRM",
-        overview:
-          "The property-native CRM for agents, teams, and brokerages—built on CalistoOS.",
+        overview: "The property-native CRM for agents, teams, and brokerages—built on CalistoOS.",
         features: [
           "Pipelines for listings, offers, contracts",
           "Property-centric records (not “accounts”)",
@@ -60,8 +73,7 @@ export default function ProHeader() {
         key: "sign",
         name: "Calisto Sign",
         category: "E-signatures",
-        overview:
-          "Property-smart e-signatures with a calm, branded signing experience—built on CalistoOS + Microsoft cloud.",
+        overview: "Property-smart e-signatures with a calm, branded signing experience—built on CalistoOS + Microsoft cloud.",
         features: [
           "Multi-party workflows",
           "Embedded approvals + signatures",
@@ -117,8 +129,7 @@ export default function ProHeader() {
         key: "assure",
         name: "Calisto Assure",
         category: "Quality + condition",
-        overview:
-          "Structured inspections and evidence trails that prove condition across homes, units, and rooms—inside Calisto One.",
+        overview: "Structured inspections and evidence trails that prove condition across homes, units, and rooms—inside Calisto One.",
         features: [
           "Inspection flows + scoring",
           "Photo evidence + structured records",
@@ -193,8 +204,7 @@ export default function ProHeader() {
         key: "signal",
         name: "Calisto Signal",
         category: "Safety + device hub",
-        overview:
-          "IoT signals become calm alerts—leaks, doors, smoke, temperature, motion—structured inside your operations hub.",
+        overview: "IoT signals become calm alerts—leaks, doors, smoke, temperature, motion—structured inside your operations hub.",
         features: [
           "Leak + smoke + environment signals",
           "Door/motion awareness",
@@ -231,20 +241,13 @@ export default function ProHeader() {
     []
   );
 
-  const [activeProduct, setActiveProduct] = useState<PlatformProduct>(platformItems[0]);
-
   const solutions = useMemo<Solution[]>(
     () => [
       {
         key: "hospitality",
         name: "Hotel & Hospitality Operators",
         subtitle: "Guest experience, keys, safety, and operations—together.",
-        goals: [
-          "Unify guest experience + operations",
-          "Digital keys that match workflows",
-          "Reduce incidents + late-night chaos",
-          "Improve staff coordination",
-        ],
+        goals: ["Unify guest experience + operations", "Digital keys that match workflows", "Reduce incidents + late-night chaos", "Improve staff coordination"],
         recommended: [
           { name: "Calisto Ops", href: "/ops" },
           { name: "Calisto Navigator", href: "/navigator" },
@@ -281,12 +284,7 @@ export default function ProHeader() {
         key: "secondhome",
         name: "Second-Home Owners",
         subtitle: "Visibility, protection, and calm oversight—without becoming a manager.",
-        goals: [
-          "Know what’s happening in my home",
-          "Prevent damage and respond fast",
-          "Control access cleanly",
-          "Get clear records and reports",
-        ],
+        goals: ["Know what’s happening in my home", "Prevent damage and respond fast", "Control access cleanly", "Get clear records and reports"],
         recommended: [
           { name: "Calisto Signal", href: "/signal" },
           { name: "Calisto Access", href: "/access" },
@@ -300,12 +298,7 @@ export default function ProHeader() {
         key: "agents",
         name: "Real Estate Agents",
         subtitle: "Property-native sales workflows, client experience, and signing.",
-        goals: [
-          "Run deals from one calm workspace",
-          "Stop juggling docs, showings, follow-ups",
-          "Give clients clarity + confidence",
-          "Close faster with less friction",
-        ],
+        goals: ["Run deals from one calm workspace", "Stop juggling docs, showings, follow-ups", "Give clients clarity + confidence", "Close faster with less friction"],
         recommended: [
           { name: "Calisto Deals", href: "/deals" },
           { name: "Calisto Sign", href: "/sign" },
@@ -318,12 +311,7 @@ export default function ProHeader() {
         key: "brokers",
         name: "Managing Brokers",
         subtitle: "Visibility, standardization, and a premium client journey across the brokerage.",
-        goals: [
-          "Standardize team workflows",
-          "Create a consistent client experience",
-          "Improve compliance and documentation",
-          "Gain performance visibility without micromanaging",
-        ],
+        goals: ["Standardize team workflows", "Create a consistent client experience", "Improve compliance and documentation", "Gain performance visibility without micromanaging"],
         recommended: [
           { name: "Calisto Deals", href: "/deals" },
           { name: "Calisto Purview", href: "/purview" },
@@ -336,132 +324,168 @@ export default function ProHeader() {
     []
   );
 
-  const [activeSolution, setActiveSolution] = useState<Solution>(solutions[0]);
-
   const companyItems = useMemo<SimpleItem[]>(
     () => [
-      {
-        title: "About Calisto Pro",
-        description: "What we build and why it exists.",
-        href: "/company",
-      },
-      {
-        title: "Founder",
-        description: "The story behind Calisto.",
-        href: "/company/founder",
-      },
-      {
-        title: "Calisto One",
-        description: "The unified portal that connects everything.",
-        href: "/calisto-one",
-      },
-      {
-        title: "Calisto Collection",
-        description: "Homes managed using Calisto Pro.",
-        href: "/calisto-collection",
-      },
-      {
-        title: "Blog",
-        description: "Guides, product thinking, and updates.",
-        href: "/blog",
-      },
-      {
-        title: "Contact",
-        description: "Talk to our team.",
-        href: "/contact",
-      },
+      { title: "About Calisto Pro", description: "What we build and why it exists.", href: "/company" },
+      { title: "Founder", description: "The story behind Calisto.", href: "/company/founder" },
+      { title: "Calisto One", description: "The unified portal that connects everything.", href: "/calisto-one" },
+      { title: "Calisto Collection", description: "Homes managed using Calisto Pro.", href: "/calisto-collection" },
+      { title: "Blog", description: "Guides, product thinking, and updates.", href: "/blog" },
+      { title: "Contact", description: "Talk to our team.", href: "/contact" },
     ],
     []
   );
 
-  // Close on ESC
+  const pricingItems = useMemo<SimpleItem[]>(
+    () => [
+      { title: "Marketplace", description: "Browse add-ons and services.", href: "/marketplace" },
+      { title: "Build your Plan", description: "Configure a plan for your portfolio.", href: "/pricing/build" },
+      { title: "Start Free Trial", description: "Start a 14-day trial.", href: "/start" },
+    ],
+    []
+  );
+
+  const [activeProduct, setActiveProduct] = useState<PlatformProduct>(platformItems[0]);
+  const [activeSolution, setActiveSolution] = useState<Solution>(solutions[0]);
+
+  // Hide on scroll down / show on scroll up (but never hide while menus are open)
   useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(null);
-    }
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      if (open || mobileOpen) return;
+
+      const y = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const goingDown = y > lastY;
+          const pastThreshold = y > 24;
+          setHideHeader(pastThreshold && goingDown);
+          lastY = y;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [open, mobileOpen]);
+
+  // Ensure header is visible when any menu is open
+  useEffect(() => {
+    if (open || mobileOpen) setHideHeader(false);
+  }, [open, mobileOpen]);
+
+  // Close menus on route change (prevents “stuck open”)
+  useEffect(() => {
+    closeAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  // Escape closes
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeAll();
+    };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Close menus when route changes via click (basic)
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
+
+  function clearCloseTimer() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    closeTimer.current = null;
+  }
+
+  function scheduleClose() {
+    clearCloseTimer();
+    closeTimer.current = window.setTimeout(() => setOpen(null), 140);
+  }
+
+  function openMenu(key: Exclude<MenuKey, null>) {
+    clearCloseTimer();
+    setOpen(key);
+  }
+
   function closeAll() {
+    clearCloseTimer();
     setOpen(null);
     setMobileOpen(false);
   }
 
+  const overlayOpen = !!open;
+
   return (
-    <header className="sticky top-0 z-50 border-b border-black/10 bg-white/90 backdrop-blur">
-      <div className="mx-auto px-4" style={{ maxWidth: MAX_W }}>
-        <div className="flex h-16 items-center justify-between gap-4">
+    <header
+      className={[
+        "sticky top-0 z-50 bg-white",
+        "transition-transform duration-300 ease-out will-change-transform",
+        hideHeader ? "-translate-y-full" : "translate-y-0",
+      ].join(" ")}
+      onMouseEnter={clearCloseTimer}
+    >
+      <div className="cal-main-inner">
+        <div className="flex h-16 items-center justify-between gap-6">
           {/* Brand */}
-          <Link href="/" className="inline-flex items-center gap-3" onClick={closeAll}>
-            <img
+          <Link href="/" className="inline-flex items-center gap-3" onClick={closeAll} aria-label="Calisto home">
+            <Image
               src="https://calistomedia.blob.core.windows.net/calisto-one/calisto_logo_300.png"
               alt="Calisto"
-              className="h-7 w-auto"
+              width={140}
+              height={36}
+              className="h-9 w-auto"
+              priority
             />
-            <span className="text-[12px] tracking-[0.22em] text-black/60">
-              PRO
-            </span>
+            <div className="leading-tight">
+              <div className="text-[16px] font-medium tracking-[-0.01em] text-black">Calisto &amp; Co.</div>
+              <div className="text-[12px] tracking-[0.18em] text-black/60 uppercase">Pro</div>
+            </div>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            <TopNavButton
-              label="Platform"
-              open={open === "platform"}
-              onOpen={() => setOpen("platform")}
-            />
-            <TopNavButton
-              label="Solutions"
-              open={open === "solutions"}
-              onOpen={() => setOpen("solutions")}
-            />
-            <Link
-              href="/pricing"
-              className="text-[14px] font-light text-black/70 hover:text-black transition"
-              onClick={closeAll}
-            >
-              Pricing
-            </Link>
-            <TopNavButton
-              label="Company"
-              open={open === "company"}
-              onOpen={() => setOpen("company")}
-            />
+          {/* Nav */}
+          <nav className="hidden md:flex items-center gap-7" aria-label="Primary">
+            <TopNavButton label="Platform" open={open === "platform"} onOpen={() => openMenu("platform")} controlsId="menu-platform" />
+            <TopNavButton label="Solutions" open={open === "solutions"} onOpen={() => openMenu("solutions")} controlsId="menu-solutions" />
+            <TopNavButton label="Pricing" open={open === "pricing"} onOpen={() => openMenu("pricing")} controlsId="menu-pricing" />
+            <TopNavButton label="Company" open={open === "company"} onOpen={() => openMenu("company")} controlsId="menu-company" />
           </nav>
 
-          {/* Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Right side */}
+          <div className="hidden md:flex items-center">
             <a
               href="https://one.calistoco.com/"
-              className="inline-flex items-center rounded-full px-4 py-2 text-[14px] font-light transition border border-black/10 hover:border-black/20"
-              style={{ background: PINK, color: "#000000" }}
+              className="inline-flex h-9 items-center justify-center rounded-[2px] px-4 text-[14px] font-normal text-black shadow-[0_6px_16px_rgba(0,0,0,0.10)] hover:shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition"
             >
-              Log In
+              Sign in
             </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center rounded-full border border-black/15 px-4 py-2 text-[14px] font-light hover:border-black/30 transition"
-              onClick={closeAll}
-            >
-              Talk to our team
-            </Link>
           </div>
 
-          {/* Mobile trigger */}
+          {/* Mobile */}
           <button
-            className="md:hidden inline-flex items-center justify-center rounded-full border border-black/15 px-3 py-2 text-[14px] font-light"
+            className="md:hidden inline-flex items-center justify-center rounded-[2px] px-3 py-2 text-[14px] font-normal text-black shadow-[0_6px_16px_rgba(0,0,0,0.10)] hover:shadow-[0_10px_24px_rgba(0,0,0,0.14)] transition"
             onClick={() => setMobileOpen((v) => !v)}
             aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
           >
             Menu
           </button>
         </div>
       </div>
 
-      {/* CLICK-CATCH OVERLAY (no dim, just closes) */}
-      {open && (
+      {/* Click-away overlay (closes any open desktop menu) */}
+      {overlayOpen && (
         <button
           aria-label="Close menu overlay"
           className="fixed inset-0 z-40 cursor-default"
@@ -470,38 +494,37 @@ export default function ProHeader() {
         />
       )}
 
-      {/* PLATFORM MEGA MENU */}
+      {/* PLATFORM (mega) */}
       {open === "platform" && (
-        <MegaMenuFrame onMouseLeave={() => setOpen(null)}>
-          <div className="grid grid-cols-[240px_1fr] gap-10">
-            {/* LEFT: PRODUCT LIST */}
+        <MegaMenuDock id="menu-platform" onMouseEnter={clearCloseTimer} onMouseLeave={scheduleClose}>
+          <div className="grid grid-cols-[260px_1fr] gap-10">
             <div>
-              <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">
-                PRODUCTS
-              </div>
+              <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">PRODUCTS</div>
+
               <div className="space-y-[2px]">
                 {platformItems.map((p) => {
                   const active = activeProduct.key === p.key;
                   return (
-                    <button
+                    <Link
                       key={p.key}
+                      href={p.href}
                       onMouseEnter={() => setActiveProduct(p)}
                       onFocus={() => setActiveProduct(p)}
+                      onClick={closeAll}
                       className={[
-                        "w-full text-left rounded-lg px-3 py-2 transition",
-                        "text-[14px] font-light",
-                        active
-                          ? "bg-black/[0.04] text-black"
-                          : "text-black/80 hover:bg-black/[0.03] hover:text-black",
+                        "block w-full text-left",
+                        ITEM_BASE,
+                        ITEM_TEXT_14,
+                        active ? PINK_BG : PINK_HOVER,
                       ].join(" ")}
                     >
                       {p.name}
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
 
-              <div className="mt-5 border-t border-black/10 pt-4">
+              <div className="mt-5 pt-4">
                 <Link
                   href="/platform"
                   onClick={closeAll}
@@ -512,46 +535,20 @@ export default function ProHeader() {
               </div>
             </div>
 
-            {/* RIGHT: PRODUCT DETAILS */}
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <div className="flex items-start justify-between gap-6">
-                <div className="min-w-0">
-                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-2">
-                    {activeProduct.category.toUpperCase()}
-                  </div>
+            <div className="min-w-0">
+              <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">OVERVIEW</div>
 
-                  <div className="text-[22px] font-light tracking-[-0.01em] text-black mb-2">
-                    {activeProduct.name}
-                  </div>
+              <div className="text-[11px] tracking-[0.22em] text-black/45 mb-2">{activeProduct.category.toUpperCase()}</div>
+              <div className="text-[22px] font-light tracking-[-0.01em] text-black mb-2">{activeProduct.name}</div>
+              <div className="text-[14px] font-light leading-relaxed text-black/70 max-w-[64ch]">{activeProduct.overview}</div>
 
-                  <div className="text-[14px] font-light leading-relaxed text-black/70 max-w-[62ch]">
-                    {activeProduct.overview}
-                  </div>
-                </div>
-
-                {/* Optional product image (placeholder ok) */}
-                <div className="hidden lg:block w-[220px] shrink-0">
-                  <div className="aspect-[4/3] rounded-xl overflow-hidden border border-black/10 bg-black/[0.02]">
-                    {activeProduct.imageSrc ? (
-                      <img
-                        src={activeProduct.imageSrc}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 border-t border-black/10 pt-5">
-                <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">
-                  CAPABILITIES
-                </div>
+              <div className="mt-6 pt-5">
+                <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">CAPABILITIES</div>
 
                 <ul className="grid grid-cols-2 gap-x-10 gap-y-2 text-[13px] font-light text-black/75">
                   {activeProduct.features.slice(0, 10).map((f) => (
                     <li key={f} className="flex items-start gap-2">
-                      <span className="mt-[7px] h-[4px] w-[4px] rounded-full bg-black/30" />
+                      <CheckIcon />
                       <span className="leading-relaxed">{f}</span>
                     </li>
                   ))}
@@ -562,7 +559,7 @@ export default function ProHeader() {
                     href={activeProduct.href}
                     onClick={closeAll}
                     className="inline-flex items-center gap-2 text-[14px] font-light"
-                    style={{ color: PINK }}
+                    style={{ color: "var(--cal-accent)" }}
                   >
                     Explore {activeProduct.name} <span aria-hidden>→</span>
                   </Link>
@@ -578,44 +575,40 @@ export default function ProHeader() {
               </div>
             </div>
           </div>
-        </MegaMenuFrame>
+        </MegaMenuDock>
       )}
 
-      {/* SOLUTIONS MEGA MENU */}
+      {/* SOLUTIONS (mega) */}
       {open === "solutions" && (
-        <MegaMenuFrame onMouseLeave={() => setOpen(null)}>
+        <MegaMenuDock id="menu-solutions" onMouseEnter={clearCloseTimer} onMouseLeave={scheduleClose}>
           <div className="grid grid-cols-[260px_1fr] gap-10">
-            {/* LEFT: CUSTOMER TYPES */}
             <div>
-              <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">
-                SOLUTIONS
-              </div>
+              <div className="mb-3 text-[11px] tracking-[0.22em] text-black/45">SOLUTIONS</div>
+
               <div className="space-y-[2px]">
                 {solutions.map((s) => {
                   const active = activeSolution.key === s.key;
                   return (
-                    <button
+                    <Link
                       key={s.key}
+                      href={s.href}
                       onMouseEnter={() => setActiveSolution(s)}
                       onFocus={() => setActiveSolution(s)}
+                      onClick={closeAll}
                       className={[
-                        "w-full text-left rounded-lg px-3 py-2 transition",
-                        "text-[14px] font-light",
-                        active
-                          ? "bg-black/[0.04] text-black"
-                          : "text-black/80 hover:bg-black/[0.03] hover:text-black",
+                        "block w-full text-left",
+                        ITEM_BASE,
+                        ITEM_TEXT_14,
+                        active ? PINK_BG : PINK_HOVER,
                       ].join(" ")}
                     >
                       {s.name}
-                      <div className="text-[12px] font-light text-black/55 mt-1 leading-snug">
-                        {s.subtitle}
-                      </div>
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
 
-              <div className="mt-5 border-t border-black/10 pt-4">
+              <div className="mt-5 pt-4">
                 <Link
                   href="/solutions"
                   onClick={closeAll}
@@ -626,24 +619,17 @@ export default function ProHeader() {
               </div>
             </div>
 
-            {/* RIGHT: SOLUTION DETAIL */}
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <div className="text-[22px] font-light tracking-[-0.01em] text-black">
-                {activeSolution.name}
-              </div>
-              <div className="mt-2 text-[14px] font-light leading-relaxed text-black/70">
-                {activeSolution.subtitle}
-              </div>
+            <div className="rounded-[2px] bg-white shadow-[0_14px_40px_rgba(0,0,0,0.10)] p-6">
+              <div className="text-[22px] font-light tracking-[-0.01em] text-black">{activeSolution.name}</div>
+              <div className="mt-2 text-[14px] font-light leading-relaxed text-black/70">{activeSolution.subtitle}</div>
 
               <div className="mt-6 grid grid-cols-2 gap-10">
                 <div>
-                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">
-                    COMMON GOALS
-                  </div>
+                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">COMMON GOALS</div>
                   <ul className="space-y-2 text-[13px] font-light text-black/75">
                     {activeSolution.goals.map((g) => (
                       <li key={g} className="flex items-start gap-2">
-                        <span className="mt-[7px] h-[4px] w-[4px] rounded-full bg-black/30" />
+                        <CheckIcon />
                         <span className="leading-relaxed">{g}</span>
                       </li>
                     ))}
@@ -651,16 +637,19 @@ export default function ProHeader() {
                 </div>
 
                 <div>
-                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">
-                    RECOMMENDED PRODUCTS
-                  </div>
+                  <div className="text-[11px] tracking-[0.22em] text-black/45 mb-3">RECOMMENDED PRODUCTS</div>
                   <div className="grid grid-cols-1 gap-2">
                     {activeSolution.recommended.map((r) => (
                       <Link
                         key={r.href}
                         href={r.href}
                         onClick={closeAll}
-                        className="rounded-lg border border-black/10 px-3 py-2 text-[13px] font-light text-black/75 hover:text-black hover:border-black/20 hover:bg-black/[0.02] transition"
+                        className={[
+                          "rounded-[2px] px-3 py-2",
+                          ITEM_TEXT_13,
+                          "text-black shadow-[0_10px_28px_rgba(0,0,0,0.10)]",
+                          PINK_HOVER,
+                        ].join(" ")}
                       >
                         {r.name}
                       </Link>
@@ -669,46 +658,69 @@ export default function ProHeader() {
                 </div>
               </div>
 
-              <div className="mt-6 border-t border-black/10 pt-5">
+              <div className="mt-6 pt-5">
                 <Link
                   href={activeSolution.href}
                   onClick={closeAll}
                   className="inline-flex items-center gap-2 text-[14px] font-light"
-                  style={{ color: PINK }}
+                  style={{ color: "var(--cal-accent)" }}
                 >
                   Explore {activeSolution.name} <span aria-hidden>→</span>
                 </Link>
               </div>
             </div>
           </div>
-        </MegaMenuFrame>
+        </MegaMenuDock>
       )}
 
-      {/* COMPANY MEGA MENU */}
-      {open === "company" && (
-        <MegaMenuFrame onMouseLeave={() => setOpen(null)}>
-          <div className="grid grid-cols-2 gap-6">
-            {companyItems.map((c) => (
-              <Link
-                key={c.href}
-                href={c.href}
-                onClick={closeAll}
-                className="rounded-2xl border border-black/10 bg-white px-5 py-4 hover:border-black/20 hover:bg-black/[0.02] transition"
-              >
-                <div className="text-[15px] font-light text-black">{c.title}</div>
-                <div className="mt-1 text-[13px] font-light text-black/65 leading-relaxed">
-                  {c.description}
-                </div>
-              </Link>
-            ))}
+      {/* PRICING (simple dropdown, like one.calistoco expectation) */}
+      {open === "pricing" && (
+        <SimpleDropdownDock id="menu-pricing" onMouseEnter={clearCloseTimer} onMouseLeave={scheduleClose}>
+          <div className="px-2 py-2">
+            <div className="text-[11px] tracking-[0.22em] text-black/45 px-2 pb-1">PRICING</div>
+            <div className="space-y-[2px]">
+              {pricingItems.map((i) => (
+                <Link
+                  key={i.href}
+                  href={i.href}
+                  onClick={closeAll}
+                  className={["block", ITEM_BASE, ITEM_TEXT_14, PINK_HOVER].join(" ")}
+                >
+                  <div className="text-black">{i.title}</div>
+                  <div className="mt-0.5 text-[12px] font-light text-black/60">{i.description}</div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </MegaMenuFrame>
+        </SimpleDropdownDock>
       )}
 
-      {/* MOBILE DRAWER */}
+      {/* COMPANY (simple dropdown, like one.calistoco expectation) */}
+      {open === "company" && (
+        <SimpleDropdownDock id="menu-company" onMouseEnter={clearCloseTimer} onMouseLeave={scheduleClose}>
+          <div className="px-2 py-2">
+            <div className="text-[11px] tracking-[0.22em] text-black/45 px-2 pb-1">COMPANY</div>
+            <div className="space-y-[2px]">
+              {companyItems.map((i) => (
+                <Link
+                  key={i.href}
+                  href={i.href}
+                  onClick={closeAll}
+                  className={["block", ITEM_BASE, ITEM_TEXT_14, PINK_HOVER].join(" ")}
+                >
+                  <div className="text-black">{i.title}</div>
+                  <div className="mt-0.5 text-[12px] font-light text-black/60">{i.description}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </SimpleDropdownDock>
+      )}
+
+      {/* MOBILE */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-black/10 bg-white">
-          <div className="mx-auto px-4 py-4" style={{ maxWidth: MAX_W }}>
+        <div id="mobile-nav" className="md:hidden bg-white shadow-[0_22px_60px_rgba(0,0,0,0.10)]">
+          <div className="cal-main-inner py-4">
             <div className="space-y-2">
               <MobileSection title="Platform">
                 <div className="grid grid-cols-1 gap-1">
@@ -717,83 +729,70 @@ export default function ProHeader() {
                       key={p.key}
                       href={p.href}
                       onClick={closeAll}
-                      className="rounded-lg px-3 py-2 text-[14px] font-light text-black/80 hover:bg-black/[0.03] hover:text-black transition"
+                      className={["rounded-[2px] px-3 py-2", ITEM_TEXT_14, "text-black transition", PINK_HOVER].join(" ")}
                     >
                       {p.name}
-                      <div className="text-[12px] font-light text-black/55 mt-1">
-                        {p.category}
-                      </div>
+                      <div className="text-[12px] font-light text-black/60 mt-1">{p.category}</div>
                     </Link>
                   ))}
                 </div>
-                <Link
-                  href="/platform"
-                  onClick={closeAll}
-                  className="mt-3 inline-flex items-center gap-2 text-[13px] font-light text-black/70"
-                >
-                  Explore the platform <span aria-hidden>→</span>
-                </Link>
               </MobileSection>
 
               <MobileSection title="Solutions">
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-1 gap-1">
                   {solutions.map((s) => (
                     <Link
                       key={s.key}
                       href={s.href}
                       onClick={closeAll}
-                      className="rounded-lg border border-black/10 px-3 py-2 text-[14px] font-light text-black/80 hover:border-black/20 hover:bg-black/[0.02] transition"
+                      className={["rounded-[2px] px-3 py-2", ITEM_TEXT_14, "text-black transition", PINK_HOVER].join(" ")}
                     >
                       {s.name}
-                      <div className="text-[12px] font-light text-black/55 mt-1">
-                        {s.subtitle}
-                      </div>
+                      <div className="text-[12px] font-light text-black/60 mt-1">{s.subtitle}</div>
                     </Link>
                   ))}
                 </div>
               </MobileSection>
 
-              <Link
-                href="/pricing"
-                onClick={closeAll}
-                className="block rounded-lg px-3 py-2 text-[14px] font-light text-black/80 hover:bg-black/[0.03] hover:text-black transition"
-              >
-                Pricing
-              </Link>
+              <MobileSection title="Pricing">
+                <div className="grid grid-cols-1 gap-1">
+                  {pricingItems.map((i) => (
+                    <Link
+                      key={i.href}
+                      href={i.href}
+                      onClick={closeAll}
+                      className={["rounded-[2px] px-3 py-2", ITEM_TEXT_14, "text-black transition", PINK_HOVER].join(" ")}
+                    >
+                      <div className="text-black">{i.title}</div>
+                      <div className="mt-0.5 text-[12px] font-light text-black/60">{i.description}</div>
+                    </Link>
+                  ))}
+                </div>
+              </MobileSection>
 
               <MobileSection title="Company">
-                <div className="grid grid-cols-1 gap-2">
-                  {companyItems.map((c) => (
+                <div className="grid grid-cols-1 gap-1">
+                  {companyItems.map((i) => (
                     <Link
-                      key={c.href}
-                      href={c.href}
+                      key={i.href}
+                      href={i.href}
                       onClick={closeAll}
-                      className="rounded-lg border border-black/10 px-3 py-2 text-[14px] font-light text-black/80 hover:border-black/20 hover:bg-black/[0.02] transition"
+                      className={["rounded-[2px] px-3 py-2", ITEM_TEXT_14, "text-black transition", PINK_HOVER].join(" ")}
                     >
-                      {c.title}
-                      <div className="text-[12px] font-light text-black/55 mt-1">
-                        {c.description}
-                      </div>
+                      <div className="text-black">{i.title}</div>
+                      <div className="mt-0.5 text-[12px] font-light text-black/60">{i.description}</div>
                     </Link>
                   ))}
                 </div>
               </MobileSection>
 
-              <div className="pt-2 flex gap-2">
+              <div className="pt-2">
                 <a
                   href="https://one.calistoco.com/"
-                  className="flex-1 inline-flex items-center justify-center rounded-full px-4 py-2 text-[14px] font-light border border-black/10"
-                  style={{ background: PINK, color: "#000000" }}
+                  className="w-full inline-flex items-center justify-center rounded-[2px] px-4 py-2 text-[14px] font-normal text-black shadow-[0_10px_28px_rgba(0,0,0,0.10)] hover:shadow-[0_14px_34px_rgba(0,0,0,0.14)] transition"
                 >
-                  Log In
+                  Sign in
                 </a>
-                <Link
-                  href="/contact"
-                  onClick={closeAll}
-                  className="flex-1 inline-flex items-center justify-center rounded-full border border-black/15 px-4 py-2 text-[14px] font-light"
-                >
-                  Talk to our team
-                </Link>
               </div>
             </div>
           </div>
@@ -803,27 +802,63 @@ export default function ProHeader() {
   );
 }
 
-/** Centered, non-fullwidth mega menu frame */
-function MegaMenuFrame({
+function MegaMenuDock({
+  id,
   children,
+  onMouseEnter,
   onMouseLeave,
 }: {
+  id: string;
   children: React.ReactNode;
+  onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
   return (
-    <div className="relative z-50">
-      <div
-        className="absolute left-1/2 top-0 -translate-x-1/2 pt-3"
-        onMouseLeave={onMouseLeave}
-        style={{ width: `min(${MAX_W}px, calc(100vw - 24px))` }}
-      >
-        <div className="rounded-[28px] border border-black/10 bg-white shadow-[0_20px_70px_rgba(0,0,0,0.10)]">
+    <div
+      id={id}
+      className="fixed inset-x-0 top-16 z-50"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      role="region"
+      aria-label="Mega menu"
+    >
+      <div className="cal-main-inner">
+        <div className={MENU_CARD}>
           <div className="p-7">{children}</div>
         </div>
       </div>
-      {/* spacer so layout doesn't jump */}
-      <div className="h-[420px]" />
+    </div>
+  );
+}
+
+// Simple dropdown that visually matches the left-column list vibe (no borders, 2px corners)
+function SimpleDropdownDock({
+  id,
+  children,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  id: string;
+  children: React.ReactNode;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
+  return (
+    <div
+      id={id}
+      className="fixed inset-x-0 top-16 z-50"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      role="region"
+      aria-label="Dropdown menu"
+    >
+      <div className="cal-main-inner">
+        <div className="flex justify-center">
+          <div className="w-full max-w-[420px]">
+            <div className={MENU_CARD}>{children}</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -832,17 +867,20 @@ function TopNavButton({
   label,
   open,
   onOpen,
+  controlsId,
 }: {
   label: string;
   open: boolean;
   onOpen: () => void;
+  controlsId: string;
 }) {
   return (
     <button
       onMouseEnter={onOpen}
       onFocus={onOpen}
-      className="text-[14px] font-light text-black/70 hover:text-black transition inline-flex items-center gap-2"
+      className="text-[15px] font-normal text-black/80 hover:text-black transition inline-flex items-center gap-2"
       aria-expanded={open}
+      aria-controls={controlsId}
     >
       {label}
       <span className="text-black/35">▾</span>
@@ -850,16 +888,10 @@ function TopNavButton({
   );
 }
 
-function MobileSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function MobileSection({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-xl border border-black/10 bg-white">
+    <div className="rounded-[2px] bg-white shadow-[0_10px_28px_rgba(0,0,0,0.10)]">
       <button
         className="w-full flex items-center justify-between px-3 py-2 text-[14px] font-light text-black/80"
         onClick={() => setOpen((v) => !v)}
@@ -870,5 +902,13 @@ function MobileSection({
       </button>
       {open && <div className="px-3 pb-3">{children}</div>}
     </div>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg className="mt-[2px] shrink-0" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M7.8 13.6 4.7 10.5l1.1-1.1 2 2 6-6 1.1 1.1-7.1 7.1z" fill="var(--cal-accent)" />
+    </svg>
   );
 }

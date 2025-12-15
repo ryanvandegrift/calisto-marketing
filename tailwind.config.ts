@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-const config = {
+const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,6 +10,9 @@ const config = {
   ],
   theme: {
     extend: {
+      /* ==============================
+         COLORS
+         ============================== */
       colors: {
         "cal-accent": "#F6C1D9",
         "cal-accent-dark": "#F4A8CB",
@@ -19,6 +22,11 @@ const config = {
         "cal-border": "#000000",
         "cal-border-light": "rgba(0,0,0,0.08)",
       },
+
+      /* ==============================
+         TYPOGRAPHY
+         font-sans now = Inter variable
+         ============================== */
       fontFamily: {
         sans: [
           "var(--font-inter)",
@@ -27,9 +35,15 @@ const config = {
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
+          "Helvetica",
+          "Arial",
           "sans-serif",
         ],
       },
+
+      /* ==============================
+         SHADOWS
+         ============================== */
       boxShadow: {
         "cal-xs": "0 1px 4px rgba(0,0,0,0.04)",
         "cal-sm": "0 2px 8px rgba(0,0,0,0.06)",
@@ -37,12 +51,20 @@ const config = {
         "cal-lg": "0 8px 24px rgba(0,0,0,0.12)",
         "cal-xl": "0 12px 32px rgba(0,0,0,0.14)",
       },
+
+      /* ==============================
+         RADIUS (matches your design)
+         ============================== */
       borderRadius: {
         "cal-sm": "4px",
         "cal-md": "8px",
         "cal-lg": "12px",
         "cal-full": "999px",
       },
+
+      /* ==============================
+         SPACING
+         ============================== */
       spacing: {
         "cal-xs": "8px",
         "cal-sm": "16px",
@@ -54,6 +76,6 @@ const config = {
     },
   },
   plugins: [],
-} satisfies Config;
+};
 
 export default config;
